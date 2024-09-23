@@ -16,6 +16,7 @@ import {
 import { Request, Response } from 'express';
 import { LocalAuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
+import { UserService } from '../user/user.service';
 // DTOs
 import CreateUserDto from './dtos/createUser.dto';
 import JwtTokenDto from './dtos/JwtToken.dto';
@@ -23,7 +24,10 @@ import ValidateUserDto from './dtos/ValidateUser.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
   private logger: Logger = new Logger(AuthController.name);
 
   @HttpCode(HttpStatus.CREATED)
@@ -44,7 +48,7 @@ export class AuthController {
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
     const { userId, password, email } = createUserDto;
-    const user = 'user';
+    const user = this.userService.findByUserId(userId);
     if (user) {
       // 아이디, 비밀번호에 대한 validation(정규표현식)은 프론트에서 처리하기!
       throw new BadRequestException('이미 존재하는 아이디입니다.');

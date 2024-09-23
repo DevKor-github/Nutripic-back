@@ -7,13 +7,17 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { User, UserService } from '../user/user.service';
 import ValidateUserDto from './dtos/ValidateUser.dto';
 import JwtTokenDto from './dtos/JwtToken.dto';
 import CreateUserDto from './dtos/createUser.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    private userService: UserService,
+  ) {}
   private logger: Logger = new Logger(AuthService.name);
 
   /**
@@ -24,13 +28,7 @@ export class AuthService {
    */
   async validateUser(userAccount: ValidateUserDto): Promise<JwtTokenDto> {
     const { userId, password } = userAccount;
-    const user = {
-      id: 'id',
-      userId: 'userId',
-      username: 'username',
-      userType: 0,
-      password: 'password',
-    }; // DUMMY
+    const user = await this.userService.findByUserId(userId);
     if (user && (await this.validatePassword(password, user.password))) {
       const { id, userId, username, userType } = user;
       return { id, userId, username, userType };
@@ -78,7 +76,7 @@ export class AuthService {
    * @param userId
    * @param password
    */
-  async register(userInfo: CreateUserDto): Promise<any> {
+  async register(userInfo: CreateUserDto): Promise<User> {
     const { userId, password, email } = userInfo;
     const hashed = await bcrypt.hash(password, 13);
   }
@@ -87,6 +85,7 @@ export class AuthService {
    * Upload or Delete (Determine it later) each token at/from Database
    * @param accessToken
    * @param refreshToken
+   * @todo DB 연결 후 유저 레코드 생성 로직 개발
    */
   async logout(accessToken: string | null, refreshToken: string) {
     // access token 리스트에서 삭제 -> 만료 시
@@ -97,6 +96,7 @@ export class AuthService {
    * Refresh access token to replace expired one.
    * @param payload
    * @returns New Access Token
+   * @todo DB 연결 후 리스트에서 토큰 삭제하는 로직 개발
    */
   async refreshAccess(payload: JwtTokenDto): Promise<string> {
     try {
@@ -115,7 +115,7 @@ export class AuthService {
    * @param refreshToken
    * @returns New Refresh Token
    */
-  async refreshRefresh() {
+  async refreshRefresh(): Promise<string> {
     try {
       return await this.jwtService.signAsync(null, { expiresIn: '10m' });
     } catch (err) {

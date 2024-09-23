@@ -8,9 +8,11 @@ import { APP_GUARD } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local-strategy';
 import { JwtStrategy } from './jwt.strategy';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
+    UserModule,
     PassportModule,
     JwtModule.register({
       global: true,
