@@ -14,7 +14,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     const user = await this.authService.validateUser({ userId, password });
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('유저 검증에 실패했습니다.');
     }
     return user;
   }
