@@ -6,6 +6,7 @@ import { validation } from './utils';
 import { AuthModule } from './auth/auth.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './cores/exceptions/http-exception.filter';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { HttpExceptionFilter } from './cores/exceptions/http-exception.filter';
       validationSchema: validation,
     }),
     AuthModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [

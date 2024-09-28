@@ -7,6 +7,7 @@ import {
 } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
+import { PrismaService } from './prisma/prisma.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -26,6 +27,10 @@ async function bootstrap() {
   );
 
   app.use(cookieParser()); // refresh token을 cookie로 관리하기 위한 미들웨어
+
+  //prisma
+  const prismaService = app.get(PrismaService);
+  await prismaService.enableShutdownHooks(app);
 
   const config = new DocumentBuilder()
     .setTitle('NUTRIPIC')
