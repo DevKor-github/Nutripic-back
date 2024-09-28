@@ -29,7 +29,8 @@ export class AuthService {
   async validateUser(userAccount: ValidateUserDto): Promise<JwtTokenDto> {
     const { userId, password } = userAccount;
     const user = await this.userService.findByUserId(userId);
-    if (user && (await this.validatePassword(password, user.password))) {
+    if (user) {
+      // Dummy 데이터이므로 추후에 ```await this.validatePassword(password, user.password)``` 추가 필요
       const { id, userId, username, userType } = user;
       return { id, userId, username, userType };
     } else {
@@ -59,9 +60,12 @@ export class AuthService {
     try {
       return {
         accessToken: await this.jwtService.signAsync(payload),
-        refreshToken: await this.jwtService.signAsync(null, {
-          expiresIn: '10m',
-        }),
+        refreshToken: await this.jwtService.signAsync(
+          {},
+          {
+            expiresIn: '10m',
+          },
+        ),
       };
     } catch (err) {
       this.logger.error('토큰 발행에서 에러가 발생하였습니다.', err.stack);
@@ -90,6 +94,7 @@ export class AuthService {
   async logout(accessToken: string | null, refreshToken: string) {
     // access token 리스트에서 삭제 -> 만료 시
     // refresh token 리스트에서 삭제 -> 로그아웃 or 만료 시
+    return;
   }
 
   /**

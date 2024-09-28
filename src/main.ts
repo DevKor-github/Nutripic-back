@@ -1,7 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {
+  DocumentBuilder,
+  SwaggerCustomOptions,
+  SwaggerModule,
+} from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -20,6 +25,8 @@ async function bootstrap() {
     }),
   );
 
+  app.use(cookieParser()); // refresh token을 cookie로 관리하기 위한 미들웨어
+
   const config = new DocumentBuilder()
     .setTitle('NUTRIPIC')
     .setDescription('API description')
@@ -27,6 +34,7 @@ async function bootstrap() {
     .addServer(`${process.env.DEV_API_URI}`, 'Dev environment')
     .addBearerAuth()
     .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(`${process.env.SWAGGER_ENDPOINT}`, app, document);
 
