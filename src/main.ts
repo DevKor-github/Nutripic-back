@@ -30,7 +30,7 @@ async function bootstrap() {
 
   //prisma
   const prismaService = app.get(PrismaService);
-  await prismaService.enableShutdownHooks(app);
+  app.enableShutdownHooks();  
 
   const config = new DocumentBuilder()
     .setTitle('NUTRIPIC')

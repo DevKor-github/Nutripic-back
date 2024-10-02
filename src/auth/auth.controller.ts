@@ -31,6 +31,7 @@ export class AuthController {
   ) {}
   private logger: Logger = new Logger(AuthController.name);
 
+  //Auth Controller test; remove later
   @Get()
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth()
@@ -38,6 +39,7 @@ export class AuthController {
     return 'Hello Auth!';
   }
 
+  //login
   // @Header('Authorization', () => 'none')
   @Public()
   @HttpCode(HttpStatus.CREATED)
@@ -68,6 +70,8 @@ export class AuthController {
     return res.json(req.user);
   }
 
+
+  //register
   @Public()
   @HttpCode(HttpStatus.CREATED)
   @ApiBearerAuth()
@@ -83,6 +87,7 @@ export class AuthController {
     await this.authService.register({ userId, password, email });
   }
 
+  //logout
   @HttpCode(HttpStatus.CREATED)
   @ApiBearerAuth()
   @Post('logout')
@@ -99,6 +104,8 @@ export class AuthController {
     return res.json({ message: '로그아웃 되었습니다.' });
   }
 
+
+  //refresh
   // Silent Token Refresh
   @Public() // refresh-token만 검증하도록 추후 설정 변경 필요
   @HttpCode(HttpStatus.CREATED)
@@ -119,4 +126,14 @@ export class AuthController {
     });
     await this.authService.logout(null, refreshToken);
   }
+
+  @Public()
+  @HttpCode(HttpStatus.CREATED)
+  @Get('kakao')
+  async handleKakaoCallback(@Body() body: { uid: string }) {
+    const {uid} = body;
+    const firebaseToken = await this.authService.createFirebaseToken(uid);
+    return {firebaseToken};
+  }
+
 }

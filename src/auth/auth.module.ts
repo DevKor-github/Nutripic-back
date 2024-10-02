@@ -9,6 +9,8 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local-strategy';
 import { JwtStrategy } from './jwt.strategy';
 import { UserModule } from 'src/user/user.module';
+import { KakaoStrategy } from './firebase/kakao.strategy';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { UserModule } from 'src/user/user.module';
     },
     LocalStrategy,
     JwtStrategy,
+    KakaoStrategy,
+    PrismaService,
   ],
   controllers: [AuthController],
   exports: [AuthService],

@@ -11,6 +11,7 @@ import { User, UserService } from '../user/user.service';
 import ValidateUserDto from './dtos/ValidateUser.dto';
 import JwtTokenDto from './dtos/JwtToken.dto';
 import CreateUserDto from './dtos/createUser.dto';
+import * as admin from 'firebase-admin';
 
 @Injectable()
 export class AuthService {
@@ -130,4 +131,9 @@ export class AuthService {
       });
     }
   }
+
+  async createFirebaseToken(uid: string): Promise<string> {
+    return admin.auth().createCustomToken(uid);
+  }
+
 }
