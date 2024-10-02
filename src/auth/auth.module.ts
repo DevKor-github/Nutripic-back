@@ -9,9 +9,13 @@ import { PassportModule } from '@nestjs/passport';
 import { UserModule } from 'src/user/user.module';
 import { KakaoStrategy } from './firebase/kakao.strategy';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal:true,
+    }),
     UserModule,
     PassportModule,
     JwtModule.register({
