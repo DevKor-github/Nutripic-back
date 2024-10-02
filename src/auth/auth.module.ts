@@ -6,8 +6,6 @@ import { jwtConstants } from './constants';
 import { JwtAuthGuard } from './auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './local-strategy';
-import { JwtStrategy } from './jwt.strategy';
 import { UserModule } from 'src/user/user.module';
 import { KakaoStrategy } from './firebase/kakao.strategy';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -28,8 +26,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
-    LocalStrategy,
-    JwtStrategy,
     KakaoStrategy,
     PrismaService,
   ],

@@ -7,7 +7,7 @@ import { Profile, Strategy } from "passport-kakao";
 export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     constructor(private readonly configService: ConfigService) {
         super({
-            clientID: configService.get('KAKAO_CLIENT_ID'),
+            clientID: configService.get('KAKAO_CLIENT_ID'), 
             callbackURL: `${configService.get('BACKEND_URL')}auth/kakao`, 
         });
     }
