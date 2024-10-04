@@ -20,18 +20,5 @@ export class UserService {
     return true;
   }
 
-  //유저
-  // async getUser(): Promise<User>{
-  //   //TODO: 헤더 토큰으로 uid 확인해서 유저 정보 리턴
-  // } 
-
-  //Unique key로 유저 찾기
-  async findOne(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: userWhereUniqueInput,
-    });
-  }
 
 }

@@ -38,7 +38,7 @@ export class FirebaseAuthGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const token = request.headers.authorization?.split('Bearer ')[1];
+    const token = this.extractToken(request);
 
     if (!token) {
       this.logger.warn('Missing or Malformed authorization token');
@@ -57,6 +57,14 @@ export class FirebaseAuthGuard implements CanActivate {
       throw new UnauthorizedException('유효하지 않거나 만료된 토큰입니다.');
     }
     
+  }
+
+  private extractToken(request): string | null {
+    const authHeader = request.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      return authHeader.split(' ')[1];
+    }
+    else throw new UnauthorizedException('토큰이 없거나 유효하지 않은 형식입니다');
   }
 }
 

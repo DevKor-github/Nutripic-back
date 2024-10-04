@@ -42,9 +42,9 @@ export class AuthController {
 
   @Public()
   @HttpCode(HttpStatus.CREATED)
-  @Get('kakao')
+  @Post('kakao')
   async handleKakaoCallback(@Body() body: { uid: string }) {
-    const {uid} = body;
+    const { uid } = body;
     const firebaseToken = await this.authService.createFirebaseToken(uid);
     return {firebaseToken};
   }
