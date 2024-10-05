@@ -10,7 +10,7 @@ export class FirebaseConfig {
     getFirebaseConfig() {
         return {
             type: this.configService.get('FIREBASE_TYPE'),
-            project_id: this.configService.get('FIREBASE_PRIVATE_ID'),
+            project_id: this.configService.get('FIREBASE_PROJECT_ID'),
             private_key_id: this.configService.get('FIREBASE_KEY_ID'),
             private_key: this.configService.get('FIREBASE_PRIVATE_KEY'),
             client_email: this.configService.get('FIREBASE_CLIENT_EMAIL'),

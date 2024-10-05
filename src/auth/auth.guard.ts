@@ -20,7 +20,7 @@ export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 //Firebase 토큰 가드
 @Injectable()
 export class FirebaseAuthGuard implements CanActivate {
-  private logger: Logger = new Logger(JwtAuthGuard.name);
+  private logger: Logger = new Logger(FirebaseAuthGuard.name);
   private auth: admin.auth.Auth;
   
   constructor(private firebaseService: FirebaseService, private readonly reflector: Reflector){

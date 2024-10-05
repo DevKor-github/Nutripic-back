@@ -3,20 +3,21 @@ import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { jwtConstants } from './constants';
-import { JwtAuthGuard } from './auth.guard';
+import { FirebaseAuthGuard, JwtAuthGuard } from './auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from 'src/user/user.module';
 import { KakaoStrategy } from './firebase/kakao.strategy';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ConfigModule } from '@nestjs/config';
+import { FirebaseService } from './firebase/firebase.service';
+import { FirebaseConfig } from './firebase/firebase.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal:true,
     }),
-    UserModule,
     PassportModule,
     JwtModule.register({
       global: true,
@@ -28,12 +29,15 @@ import { ConfigModule } from '@nestjs/config';
     AuthService,
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useClass: FirebaseAuthGuard,
     },
     KakaoStrategy,
     PrismaService,
+    FirebaseService,
+    FirebaseConfig,
+    FirebaseAuthGuard,
   ],
   controllers: [AuthController],
-  exports: [AuthService],
+  exports: [AuthService, FirebaseService, FirebaseAuthGuard],
 })
 export class AuthModule {}

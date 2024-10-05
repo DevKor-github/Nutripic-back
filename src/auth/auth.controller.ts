@@ -27,7 +27,6 @@ import ValidateUserDto from './dtos/ValidateUser.dto';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly userService: UserService,
   ) {}
   private logger: Logger = new Logger(AuthController.name);
 
@@ -35,7 +34,6 @@ export class AuthController {
   @Public()
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiBearerAuth()
   getHello(): string {
     return 'Hello Auth!';
   }

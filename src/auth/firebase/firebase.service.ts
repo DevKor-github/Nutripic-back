@@ -8,7 +8,7 @@ export class FirebaseService {
 
     constructor(private readonly firebaseConfig: FirebaseConfig) {
         this.firebaseService = admin.initializeApp({
-            credential: admin.credential.cert(this.firebaseConfig.getFirebaseConfig as admin.ServiceAccount)
+            credential: admin.credential.cert(this.firebaseConfig.getFirebaseConfig() as admin.ServiceAccount)
         })
     }
 
