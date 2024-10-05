@@ -14,5 +14,33 @@ datasource db {
 }
 
 model User {
-  uuid        String        @id @unique @db.VarChar(128)
+  uid     String    @id @unique @db.VarChar(128)
+  Storage Storage[]
+}
+
+model Storage {
+  user       User         @relation(fields: [userId], references: [uid])
+  userId     String
+  type       StorageType
+  StoredFood StoredFood[]
+
+  @@id([userId, type])
+}
+
+model StoredFood {
+  id          Int         @id @default(autoincrement())
+  storedIn    Storage     @relation(fields: [userId, storageType], references: [userId, type])
+  userId      String
+  storageType StorageType
+  name        String      @db.VarChar(255)
+  //category string
+  addedDate   DateTime    @default(now())
+  expireDate  DateTime
+  expired     Boolean     @default(false)
+}
+
+enum StorageType {
+  fridge
+  freezer
+  room
 }
