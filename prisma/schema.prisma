@@ -22,12 +22,12 @@ model Storage {
   user       User         @relation(fields: [userId], references: [uid])
   userId     String
   type       StorageType
-  StoredFood StoredFood[]
+  Food Food[]
 
   @@id([userId, type])
 }
 
-model StoredFood {
+model Food {
   id          Int         @id @default(autoincrement())
   storedIn    Storage     @relation(fields: [userId, storageType], references: [userId, type])
   userId      String
