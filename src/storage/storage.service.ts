@@ -28,5 +28,16 @@ export class StorageService {
 
         return foodsInStorage;
     }
+
+    async addFood(userId: string, storageType: string): Promise<boolean> {
+
+        return true;
+    }
+
+    async deleteFood(userId: string): Promise<boolean> {
+
+        return true;
+    }
+
 }
 

@@ -7,10 +7,9 @@ export class StorageRepository {
     constructor(private prisma: PrismaService) {}
 
     async findStoragesByUser(userId: string): Promise<Storage[]>{
-        const tmp = this.prisma.storage.findMany({
+        return this.prisma.storage.findMany({
             where: { userId }
         })
-        return tmp;
     }
 
     async findFoodByStorage(
@@ -18,7 +17,7 @@ export class StorageRepository {
         storageType: StorageType
     ): Promise<Food[]>{
         return this.prisma.food.findMany({
-            where: { userId, storageType}
+            where: { userId, storageType }
         })
     }
 }
