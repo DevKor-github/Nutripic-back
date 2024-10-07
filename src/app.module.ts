@@ -9,6 +9,7 @@ import { HttpExceptionFilter } from './cores/exceptions/http-exception.filter';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { FirebaseAuthGuard } from './auth/auth.guard';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { FirebaseAuthGuard } from './auth/auth.guard';
     AuthModule,
     UserModule,
     PrismaModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [
