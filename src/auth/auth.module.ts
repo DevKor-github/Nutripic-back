@@ -27,10 +27,6 @@ import { FirebaseConfig } from './firebase/firebase.config';
   ],
   providers: [
     AuthService,
-    {
-      provide: APP_GUARD,
-      useClass: FirebaseAuthGuard,
-    },
     KakaoStrategy,
     PrismaService,
     FirebaseService,

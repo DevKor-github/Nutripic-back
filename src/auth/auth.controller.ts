@@ -21,6 +21,7 @@ import { UserService } from '../user/user.service';
 import CreateUserDto from './dtos/createUser.dto';
 import JwtTokenDto from './dtos/JwtToken.dto';
 import ValidateUserDto from './dtos/ValidateUser.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -40,6 +41,7 @@ export class AuthController {
 
   @Public()
   @HttpCode(HttpStatus.CREATED)
+  @UseGuards(AuthGuard('kakao'))
   @Post('kakao')
   async handleKakaoCallback(@Body() body: { uid: string }) {
     const { uid } = body;
