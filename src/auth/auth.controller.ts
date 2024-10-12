@@ -7,20 +7,10 @@ import {
   HttpStatus,
   Logger,
   Body,
-  Req,
-  Res,
-  BadRequestException,
-  UnauthorizedException,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
-import { Request, Response } from 'express';
-import { LocalAuthGuard, Public } from './auth.guard';
+import { ApiTags } from '@nestjs/swagger';
+import { Public } from './auth.guard';
 import { AuthService } from './auth.service';
-import { UserService } from '../user/user.service';
-// DTOs
-import CreateUserDto from './dtos/createUser.dto';
-import JwtTokenDto from './dtos/JwtToken.dto';
-import ValidateUserDto from './dtos/ValidateUser.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Auth')
