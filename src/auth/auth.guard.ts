@@ -11,7 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthGuard } from '@nestjs/passport';
 import { jwtConstants } from './constants';
 import { Reflector } from '@nestjs/core';
-import * as admin from "firebase-admin"
+import * as admin from 'firebase-admin';
 import { FirebaseService } from './firebase/firebase.service';
 
 export const IS_PUBLIC_KEY = 'isPublic';
@@ -22,9 +22,12 @@ export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
 export class FirebaseAuthGuard implements CanActivate {
   private logger: Logger = new Logger(FirebaseAuthGuard.name);
   private auth: admin.auth.Auth;
-  
-  constructor(private firebaseService: FirebaseService, private readonly reflector: Reflector){
-    this.auth = firebaseService.getAuth()
+
+  constructor(
+    private firebaseService: FirebaseService,
+    private readonly reflector: Reflector
+  ) {
+    this.auth = firebaseService.getAuth();
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -43,7 +46,7 @@ export class FirebaseAuthGuard implements CanActivate {
     if (!token) {
       this.logger.warn('Missing or Malformed authorization token');
       throw new UnauthorizedException(
-        '토큰이 없거나 형식이 올바르지 않습니다.',
+        '토큰이 없거나 형식이 올바르지 않습니다.'
       );
     }
 
@@ -51,20 +54,18 @@ export class FirebaseAuthGuard implements CanActivate {
       const decodedToken = await this.auth.verifyIdToken(token);
       request.user = decodedToken;
       return true;
-
     } catch (err) {
       this.logger.error('Invalid or expired token', err.stack);
       throw new UnauthorizedException('유효하지 않거나 만료된 토큰입니다.');
     }
-    
   }
 
   private extractToken(request): string | null {
     const authHeader = request.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       return authHeader.split(' ')[1];
-    }
-    else throw new UnauthorizedException('토큰이 없거나 유효하지 않은 형식입니다');
+    } else
+      throw new UnauthorizedException('토큰이 없거나 유효하지 않은 형식입니다');
   }
 }
 
@@ -75,7 +76,7 @@ export class LocalAuthGuard extends AuthGuard('local') {}
 export class JwtAuthGuard extends AuthGuard('jwt') {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly reflector: Reflector,
+    private readonly reflector: Reflector
   ) {
     super();
   }
@@ -98,7 +99,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if (!token) {
       this.logger.warn('Missing or Malformed authorization token');
       throw new UnauthorizedException(
-        '토큰이 없거나 형식이 올바르지 않습니다.',
+        '토큰이 없거나 형식이 올바르지 않습니다.'
       );
     }
 
@@ -115,5 +116,4 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw new UnauthorizedException('유효하지 않거나 만료된 토큰입니다.');
     }
   }
-
 }

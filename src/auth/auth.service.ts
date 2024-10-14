@@ -20,5 +20,4 @@ export class AuthService {
   async createFirebaseToken(uid: string): Promise<string> {
     return admin.auth().createCustomToken(uid);
   }
-
 }

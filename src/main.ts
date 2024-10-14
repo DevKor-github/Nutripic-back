@@ -15,7 +15,7 @@ async function bootstrap() {
     logger: ['log', 'warn', 'error'],
   });
 
-  const configService = app.get(ConfigService)
+  const configService = app.get(ConfigService);
 
   //CORS
   app.enableCors();
@@ -26,14 +26,14 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
-    }),
+    })
   );
 
   app.use(cookieParser()); // refresh token을 cookie로 관리하기 위한 미들웨어
 
   //prisma
   const prismaService = app.get(PrismaService);
-  app.enableShutdownHooks();  
+  app.enableShutdownHooks();
 
   const config = new DocumentBuilder()
     .setTitle('NUTRIPIC')
@@ -44,7 +44,11 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup(`${configService.get('SWAGGER_ENDPOINT')}`, app, document);
+  SwaggerModule.setup(
+    `${configService.get('SWAGGER_ENDPOINT')}`,
+    app,
+    document
+  );
 
   await app.listen(configService.get('SERVER_PORT'));
 }
