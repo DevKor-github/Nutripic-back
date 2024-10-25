@@ -16,7 +16,7 @@ import { FirebaseConfig } from './firebase/firebase.config';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal:true,
+      isGlobal: true,
     }),
     PassportModule,
     JwtModule.register({

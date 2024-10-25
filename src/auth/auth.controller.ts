@@ -26,9 +26,7 @@ import { AuthGuard } from '@nestjs/passport';
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
   private logger: Logger = new Logger(AuthController.name);
 
   //Auth Controller test; remove later
@@ -46,7 +44,6 @@ export class AuthController {
   async handleKakaoCallback(@Body() body: { uid: string }) {
     const { uid } = body;
     const firebaseToken = await this.authService.createFirebaseToken(uid);
-    return {firebaseToken};
+    return { firebaseToken };
   }
-
 }
