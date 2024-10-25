@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Food, StorageType } from '@prisma/client';
+import { Food, Storage } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { StorageRepository } from './storage.repository';
@@ -13,16 +13,16 @@ export class StorageService {
     ) {}
 
     //내 식재료 가져오기
-    async getStorageByUser(userId: string): Promise<{ storage: string; foods: Food[] }[]> {
+    async getStorageByUser(userId: string): Promise<{ storage: Storage; foods: Food[] }[]> {
         const storages = await this.storageRepository.findStoragesByUser(userId);
       
         const foodsInStorage = await Promise.all(
             storages.map( async (storage) => {
                 const foods = await this.storageRepository.findFoodByStorage(
-                    storage.userId,
+                    userId,
                     storage.type
                 );
-                return { storage: storage.type, foods };
+                return { storage, foods };
             }),
         );
 
