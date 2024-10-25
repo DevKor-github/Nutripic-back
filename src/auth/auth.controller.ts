@@ -31,7 +31,6 @@ export class AuthController {
 
   @Public()
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(AuthGuard('kakao'))
   @Post('kakao')
   async handleKakaoCallback(@Body() body: { uid: string }) {
     const { uid } = body;
