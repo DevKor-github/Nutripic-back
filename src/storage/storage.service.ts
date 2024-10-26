@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { StorageRepository } from './storage.repository';
 import { FoodDto } from './dto/food.dto';
+import { UpdateFoodDto } from './dto/updateFood.dto';
 
 @Injectable()
 export class StorageService {
@@ -54,18 +55,32 @@ export class StorageService {
     foodId: number,
     amount: number
   ): Promise<Food> {
-    const foodToDelete = await this.storageRepository.findByFoodId(foodId);
-    //삭제하려는 식재료가 로그인한 유저의 식재료인지 확인
-    if (foodToDelete.userId != userId) throw new UnauthorizedException();
+    const foodToDelete = await this.checkIsFoodOwner(userId, foodId);
 
     //같은 유통기한의 식재료가 아직 남아있다면 수량 정보만 변경
     if (foodToDelete.amount > amount)
-      return await this.storageRepository.updateFoodAmount(
+      return this.storageRepository.updateFoodAmount(
         foodId,
         foodToDelete.amount - amount
       );
-    else await this.storageRepository.deleteByFoodId(foodId);
+    else return this.storageRepository.deleteByFoodId(foodId);
   }
 
   //음식 정보 수정
+  async updateFoodInfo(userId: string, newFoodInfo: UpdateFoodDto) {
+    const food = await this.checkIsFoodOwner(userId, newFoodInfo.id);
+
+    const newFood: UpdateFoodDto = {
+      ...food,
+      ...newFoodInfo,
+    };
+
+    return this.storageRepository.updateFoodInfo(newFood);
+  }
+
+  async checkIsFoodOwner(userId: string, foodId: number): Promise<Food> {
+    const food = await this.storageRepository.findByFoodId(foodId);
+    if (food.userId != userId) throw new UnauthorizedException();
+    return food;
+  }
 }

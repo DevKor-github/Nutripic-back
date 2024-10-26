@@ -25,7 +25,9 @@ export class StorageController {
   @UseGuards(FirebaseAuthGuard)
   @Get()
   @HttpCode(HttpStatus.OK)
-  getFood(@User() uid: string) {}
+  getFood(@User() uid: string) {
+    return this.storageService.getStorageByUser(uid);
+  }
 
   @UseGuards(FirebaseAuthGuard)
   @Post('/add')

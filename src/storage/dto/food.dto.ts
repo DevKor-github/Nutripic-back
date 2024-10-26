@@ -11,7 +11,7 @@ import {
 export class FoodDto {
   @IsString()
   @IsOptional()
-  id: string;
+  id?: number;
 
   @IsString()
   @IsNotEmpty()
