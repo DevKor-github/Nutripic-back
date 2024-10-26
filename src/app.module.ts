@@ -27,11 +27,11 @@ import { StorageModule } from './storage/storage.module';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: FirebaseAuthGuard
+      useClass: FirebaseAuthGuard,
     },
-    { 
-      provide: APP_FILTER, 
-      useClass: HttpExceptionFilter 
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
     },
     AppService,
   ],
