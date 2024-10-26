@@ -4,6 +4,7 @@ import {
   IsDateString,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -25,7 +26,7 @@ export class FoodDto {
   @IsNotEmpty()
   name: string;
 
-  @IsInt()
+  @IsNumber()
   amount: number;
 
   @IsString()

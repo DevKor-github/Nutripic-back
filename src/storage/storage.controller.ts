@@ -48,6 +48,7 @@ export class StorageController {
     return this.storageService.deleteFood(uid, food.id, food.amount);
   }
 
+  //식재료 정보 수정
   @UseGuards(FirebaseAuthGuard)
   @Put('/update')
   @HttpCode(HttpStatus.OK)
