@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Food, Storage, StorageType } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
@@ -14,16 +14,11 @@ export class StorageService {
   ) {}
 
   //음식 생성
-  async createFoods(
-    userId: string,
-    storageType: string,
-    Foods: FoodDto[]
-  ): Promise<Food[]> {
+  async createFoods(userId: string, Foods: FoodDto[]): Promise<Food[]> {
     //TODO: 식재료 유통기한 정보 추가
 
     const FoodsToAdd = Foods.map((food) => ({
       userId,
-      storageType: StorageType[storageType],
       ...food,
     }));
 
@@ -54,8 +49,22 @@ export class StorageService {
   }
 
   //음식 삭제
-  async deleteFood(userId: string): Promise<boolean> {
-    return true;
+  async deleteFood(
+    userId: string,
+    foodId: number,
+    amount: number
+  ): Promise<Food> {
+    const foodToDelete = await this.storageRepository.findByFoodId(foodId);
+    //삭제하려는 식재료가 로그인한 유저의 식재료인지 확인
+    if (foodToDelete.userId != userId) throw new UnauthorizedException();
+
+    //같은 유통기한의 식재료가 아직 남아있다면 수량 정보만 변경
+    if (foodToDelete.amount > amount)
+      return await this.storageRepository.updateFoodAmount(
+        foodId,
+        foodToDelete.amount - amount
+      );
+    else await this.storageRepository.deleteByFoodId(foodId);
   }
 
   //음식 정보 수정

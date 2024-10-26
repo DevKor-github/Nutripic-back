@@ -1,6 +1,11 @@
-import { IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class AddFoodDto {
-    @IsString()
-    foodId: string
+export class DeleteFoodDto {
+  @IsNumber()
+  @IsNotEmpty()
+  id: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  amount: number;
 }
