@@ -14,7 +14,7 @@ export class StorageService {
     private storageRepository: StorageRepository
   ) {}
 
-  //음식 생성
+  //식재료 추가
   async createFoods(userId: string, Foods: FoodDto[]): Promise<Food[]> {
     //TODO: 식재료 유통기한 정보 추가
 
@@ -49,7 +49,7 @@ export class StorageService {
     return foodsInStorage;
   }
 
-  //음식 삭제
+  //식재료 삭제
   async deleteFood(
     userId: string,
     foodId: number,
@@ -66,7 +66,7 @@ export class StorageService {
     else return this.storageRepository.deleteByFoodId(foodId);
   }
 
-  //음식 정보 수정
+  //식재료 정보 수정
   async updateFoodInfo(userId: string, newFoodInfo: UpdateFoodDto) {
     const food = await this.checkIsFoodOwner(userId, newFoodInfo.id);
 
@@ -78,6 +78,7 @@ export class StorageService {
     return this.storageRepository.updateFoodInfo(newFood);
   }
 
+  //수정하는 식재료가 로그인한 유저 소유인지 확인
   async checkIsFoodOwner(userId: string, foodId: number): Promise<Food> {
     const food = await this.storageRepository.findByFoodId(foodId);
     if (food.userId != userId) throw new UnauthorizedException();

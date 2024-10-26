@@ -20,7 +20,7 @@ export class StorageRepository {
 
   async createFoods(foods: FoodDto[]): Promise<Food[]> {
     return this.prisma.food.createManyAndReturn({
-      data: foods, //food dto id 확인
+      data: foods,
     });
   }
 
