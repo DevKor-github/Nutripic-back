@@ -25,11 +25,11 @@ import { FirebaseAuthGuard } from './auth/auth.guard';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: FirebaseAuthGuard
+      useClass: FirebaseAuthGuard,
     },
-    { 
-      provide: APP_FILTER, 
-      useClass: HttpExceptionFilter 
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
     },
     AppService,
   ],
