@@ -7,13 +7,6 @@ import { FoodDto } from "./dto/food.dto";
 export class StorageRepository {
     constructor(private prisma: PrismaService) {}
 
-    //유저 Storage 찾기
-    async findStoragesByUser(userId: string): Promise<Storage[]>{
-        return this.prisma.storage.findMany({
-            where: { userId }
-        })
-    }
-    
     //Storage에 저장된 식재료 모두 찾기
     async findFoodByStorage(
         userId: string,

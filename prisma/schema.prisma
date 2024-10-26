@@ -34,7 +34,7 @@ model Food {
   storageType StorageType
   name        String      @db.VarChar(255)
   amount      Int         @default(1)
-  //category string
+  category    String
   addedDate   DateTime    @default(now())
   expireDate  DateTime?
   expired     Boolean     @default(false)
