@@ -29,7 +29,7 @@ export class StorageService {
   //내 식재료 가져오기
   async getStorageByUser(
     userId: string
-  ): Promise<{ storage: Storage; foods: Food[] }[]> {
+  ): Promise<{ storage: string; foods: Food[] }[]> {
     const storages: Storage[] = [
       { userId, type: StorageType.freezer },
       { userId, type: StorageType.fridge },
@@ -42,7 +42,7 @@ export class StorageService {
           userId,
           storage.type
         );
-        return { storage, foods };
+        return { storage: storage.type, foods };
       })
     );
 

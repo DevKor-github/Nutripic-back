@@ -14,7 +14,7 @@ export class FoodDto {
   id?: number;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   userId: string;
 
   @IsString()

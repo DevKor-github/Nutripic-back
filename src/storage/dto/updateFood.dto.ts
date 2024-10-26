@@ -4,12 +4,13 @@ import {
   IsDateString,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
 
 export class UpdateFoodDto {
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
   id: number;
 
