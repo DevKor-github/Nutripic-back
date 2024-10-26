@@ -33,7 +33,7 @@ model Food {
   userId      String
   storageType StorageType
   name        String      @db.VarChar(255)
-  //category string
+  // category    String
   addedDate   DateTime    @default(now())
   expireDate  DateTime
   expired     Boolean     @default(false)
