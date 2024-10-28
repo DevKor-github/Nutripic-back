@@ -2,7 +2,6 @@ import { StorageType } from '@prisma/client';
 import {
   IsBoolean,
   IsDateString,
-  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -22,7 +21,7 @@ export class UpdateFoodDto {
   @IsOptional()
   name?: string;
 
-  @IsInt()
+  @IsNumber()
   @IsOptional()
   amount?: number;
 
