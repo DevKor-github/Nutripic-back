@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { FirebaseAuthGuard } from 'src/auth/auth.guard';
-import { User } from 'src/utils/user.decorator';
+import { User } from 'src/utils/decorator/user.decorator';
 
 @ApiTags('User')
 @ApiBearerAuth()
