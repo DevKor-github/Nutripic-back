@@ -8,11 +8,7 @@ import { UpdateFoodDto } from './dto/updateFood.dto';
 
 @Injectable()
 export class StorageService {
-  constructor(
-    private prisma: PrismaService,
-    private userservice: UserService,
-    private storageRepository: StorageRepository
-  ) {}
+  constructor(private storageRepository: StorageRepository) {}
 
   //식재료 추가
   async createFoods(userId: string, Foods: FoodDto[]): Promise<Food[]> {
