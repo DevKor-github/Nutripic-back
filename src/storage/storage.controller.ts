@@ -17,7 +17,6 @@ import { StorageService } from './storage.service';
 import { DeleteFoodDto } from './dto/deleteFood.dto';
 import { Food } from '@prisma/client';
 import { UpdateFoodDto } from './dto/updateFood.dto';
-import { string } from 'joi';
 
 @ApiTags('Storage')
 @ApiBearerAuth()

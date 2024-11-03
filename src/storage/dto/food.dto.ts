@@ -47,7 +47,7 @@ export class FoodDto {
 
   @ApiProperty({ description: '유통기한' })
   @IsDateString()
-  @IsNotEmpty() //TODO: empty? 기본 값 논의
+  @IsOptional() //TODO: empty? 기본 값 논의
   expireDate: string;
 
   @ApiProperty({ description: '유통기한 지남 여부' })

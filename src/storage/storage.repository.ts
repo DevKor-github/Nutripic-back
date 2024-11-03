@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Food, Storage, StorageType } from '@prisma/client';
+import { Food, StorageType } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { FoodDto } from './dto/food.dto';
 import { UpdateFoodDto } from './dto/updateFood.dto';
