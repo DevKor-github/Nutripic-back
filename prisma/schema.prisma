@@ -16,6 +16,7 @@ datasource db {
 model User {
   uid     String    @id @unique @db.VarChar(128)
   Storage Storage[]
+  Diary   Diary[]
 }
 
 model Storage {
@@ -44,4 +45,19 @@ enum StorageType {
   fridge
   freezer
   room
+}
+
+model Diary{
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [uid])
+  userId String
+  body String
+  createdAt DateTime
+  diaryImage DiaryImage[]
+} // recipe와도 참조관계를 설정하여 어떤 레시피에 따라 요리를 했는지 다이어리에 표시하는 것도 좋을 것 같습니다!
+
+model DiaryImage{
+  url String @id
+  diary Diary @relation(fields: [diaryId], references: [id])
+  diaryId Int
 }
