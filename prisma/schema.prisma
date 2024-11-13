@@ -13,65 +13,77 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
+model User {
   uid             String            @id @unique @db.VarChar(128)
-  storage         storage[]
-  recipe_bookmark recipe_bookmark[]
+  storage         Storage[]
+  recipeBookmark RecipeBookmark[]
+
+  @@map("user")
 }
 
-model storage {
-  user   user         @relation(fields: [userId], references: [uid])
-  userId String
-  type   storage_type
-  food   food[]
+model Storage {
+  user   User         @relation(fields: [userId], references: [uid])
+  userId String       @map("user_id")
+  type   StorageType
+  food   Food[]
 
   @@id([userId, type])
+  @@map("storage")
 }
 
-model food {
+model Food {
   id           Int          @id @default(autoincrement())
-  storedIn     storage      @relation(fields: [userId, storage_type], references: [userId, type])
+  storedIn     Storage      @relation(fields: [userId, storageType], references: [userId, type]) 
   userId       String
-  storage_type storage_type
+  storageType StorageType
   name         String       @db.VarChar(255)
   exists       Boolean      @default(true)
-  category     String
-  addedDate    DateTime     @default(now())
-  expireDate   DateTime?
+  class1       String       @db.VarChar(255) //대분류
+  class2       String       @db.VarChar(255) @default("기타") //중분류
+  addedDate    DateTime     @default(now()) @map("added_date")
+  expireDate   DateTime?                    @map("expire_date")
   expired      Boolean      @default(false)
+
+  @@map("food")
 }
 
-enum storage_type {
+enum StorageType {
   fridge
   freezer
   room
+
+  @@map("storage_type")
 }
 
-model recipe {
+model Recipe {
   id           Int    @id @default(autoincrement())
   name         String @db.VarChar(255)
   procedures   String
   difficulty   Int //? enum으로 난이도 구분하기?
-  cooking_time Int //분 단위 
+  cookingTime Int  @map("cooking_time")//분 단위  
 
-  recipe_ingredient recipe_ingredient[]
-  recipe_bookmark   recipe_bookmark[]
+  recipeIngredient RecipeIngredient[]
+  recipeBookmark  RecipeBookmark[]
+
+  @@map("recipe")
 }
 
-model recipe_ingredient {
-  recipe   recipe @relation(fields: [recipeId], references: [id])
-  recipeId Int
+model RecipeIngredient {
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  recipeId Int    @map("recipe_id")
   name     String
   amout    Float
 
   @@id([recipeId, name])
+  @@map("recipe_ingredient")
 }
 
-model recipe_bookmark {
-  user     user   @relation(fields: [userId], references: [uid])
-  userId   String
-  recipe   recipe @relation(fields: [recipeId], references: [id])
-  recipeId Int
+model RecipeBookmark {
+  user     User   @relation(fields: [userId], references: [uid])
+  userId   String @map("user_id")
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  recipeId Int    @map("recipe_id")
 
   @@id([userId, recipeId])
+  @@map("recipe_bookmark")
 }
