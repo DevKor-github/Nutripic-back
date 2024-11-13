@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { Food, Storage, StorageType } from '@prisma/client';
+import { food, storage, storage_type } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { StorageRepository } from './storage.repository';
@@ -11,7 +11,7 @@ export class StorageService {
   constructor(private storageRepository: StorageRepository) {}
 
   //식재료 추가
-  async createFoods(userId: string, Foods: FoodDto[]): Promise<Food[]> {
+  async createFoods(userId: string, Foods: FoodDto[]): Promise<food[]> {
     //TODO: 식재료 유통기한 정보 추가
 
     const FoodsToAdd = Foods.map((food) => ({
@@ -25,7 +25,7 @@ export class StorageService {
   //내 식재료 가져오기
   async getStorageByUser(
     userId: string
-  ): Promise<{ storage: string; foods: Food[] }[]> {
+  ): Promise<{ storage: string; foods: food[] }[]> {
     const storages: Storage[] = [
       { userId, type: StorageType.freezer },
       { userId, type: StorageType.fridge },
@@ -50,7 +50,7 @@ export class StorageService {
     userId: string,
     foodId: number,
     amount: number
-  ): Promise<Food> {
+  ): Promise<food> {
     const foodToDelete = await this.checkIsFoodOwner(userId, foodId);
 
     //같은 유통기한의 식재료가 아직 남아있다면 수량 정보만 변경
@@ -75,7 +75,7 @@ export class StorageService {
   }
 
   //수정하는 식재료가 로그인한 유저 소유인지 확인
-  async checkIsFoodOwner(userId: string, foodId: number): Promise<Food> {
+  async checkIsFoodOwner(userId: string, foodId: number): Promise<food> {
     const food = await this.storageRepository.findByFoodId(foodId);
     if (food.userId != userId) throw new UnauthorizedException();
     return food;

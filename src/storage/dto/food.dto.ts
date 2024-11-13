@@ -30,28 +30,28 @@ export class FoodDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ description: '수량' })
-  @IsNumber()
-  @IsNotEmpty()
-  amount: number;
-
-  @ApiProperty({ description: '분류' })
+  @ApiProperty({ description: '대분류' })
   @IsString()
   @IsNotEmpty()
-  category: string;
+  class1: string;
+
+  @ApiProperty({ description: '중분류' })
+  @IsString()
+  @IsOptional()
+  class2?: string;
 
   @ApiProperty({ description: '추가 날짜' })
   @IsDateString()
-  @IsNotEmpty()
-  addedDate: string;
+  @IsOptional()
+  addedDate?: string | Date; //TODO: 백엔드에서 추가
 
   @ApiProperty({ description: '유통기한' })
   @IsDateString()
   @IsOptional() //TODO: empty? 기본 값 논의
-  expireDate: string;
+  expireDate?: string | Date;
 
   @ApiProperty({ description: '유통기한 지남 여부' })
   @IsBoolean()
   @IsOptional() //기본값: false (유통기한 지나지 않음)
-  expired: boolean;
+  expired?: boolean;
 }

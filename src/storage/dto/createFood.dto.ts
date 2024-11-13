@@ -9,26 +9,26 @@ import {
   IsString,
 } from 'class-validator';
 
-export class UpdateFoodDto {
-  @ApiProperty({ description: '식재료 id' })
-  @IsNumber()
-  @IsNotEmpty()
-  id: number;
+export class CreateFoodDto {
+  @ApiProperty({ description: '식재료 id - 자동 생성 (입력 필요 없음)' })
+  @IsString()
+  @IsOptional()
+  id?: number;
 
   @ApiProperty({ description: 'fridge/freezer/room' })
   @IsString()
-  @IsOptional()
-  storageType?: StorageType;
+  @IsNotEmpty()
+  storageType: StorageType;
 
   @ApiProperty({ description: '식재료 이름' })
   @IsString()
-  @IsOptional()
-  name?: string;
+  @IsNotEmpty()
+  name: string;
 
   @ApiProperty({ description: '대분류' })
   @IsString()
-  @IsOptional()
-  class1?: string;
+  @IsNotEmpty()
+  class1: string;
 
   @ApiProperty({ description: '중분류' })
   @IsString()
@@ -37,16 +37,16 @@ export class UpdateFoodDto {
 
   @ApiProperty({ description: '추가 날짜' })
   @IsDateString()
-  @IsOptional()
+  @IsOptional() //기본값: 추가한 일시
   addedDate?: string | Date;
 
   @ApiProperty({ description: '유통기한' })
   @IsDateString()
-  @IsOptional()
+  @IsOptional() //TODO: empty? 기본 값 논의
   expireDate?: string | Date;
 
   @ApiProperty({ description: '유통기한 지남 여부' })
   @IsBoolean()
-  @IsOptional()
+  @IsOptional() //기본값: false (유통기한 지나지 않음)
   expired?: boolean;
 }

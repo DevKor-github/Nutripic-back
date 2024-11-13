@@ -17,6 +17,7 @@ import { StorageService } from './storage.service';
 import { DeleteFoodDto } from './dto/deleteFood.dto';
 import { Food } from '@prisma/client';
 import { UpdateFoodDto } from './dto/updateFood.dto';
+import { CreateFoodDto } from './dto/createFood.dto';
 
 @ApiTags('Storage')
 @ApiBearerAuth()
@@ -37,7 +38,10 @@ export class StorageController {
   @UseGuards(FirebaseAuthGuard)
   @Post('/add')
   @HttpCode(HttpStatus.CREATED)
-  addFood(@User() uid: string, @Body() foods: FoodDto[]): Promise<Food[]> {
+  addFood(
+    @User() uid: string,
+    @Body() foods: CreateFoodDto[]
+  ): Promise<Food[]> {
     return this.storageService.createFoods(uid, foods);
   }
 
