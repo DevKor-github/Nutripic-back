@@ -34,7 +34,7 @@ model food {
   userId       String
   storage_type storage_type
   name         String       @db.VarChar(255)
-  amount       Int          @default(1)
+  exists       Boolean      @default(true)
   category     String
   addedDate    DateTime     @default(now())
   expireDate   DateTime?
