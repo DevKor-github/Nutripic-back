@@ -36,24 +36,11 @@ export class StorageRepository {
     });
   }
 
-  async updateFoodAmount(id: number, newAmount: number): Promise<Food> {
-    return this.prisma.food.update({
-      where: { id },
-      data: { amount: newAmount },
-    });
-  }
-
   async updateFoodInfo(foodInfo: UpdateFoodDto): Promise<Food> {
     return this.prisma.food.update({
       where: { id: foodInfo.id },
       data: {
-        storageType: foodInfo.storageType,
-        name: foodInfo.name,
-        amount: foodInfo.amount,
-        category: foodInfo.category,
-        addedDate: foodInfo.addedDate,
-        expireDate: foodInfo.expireDate,
-        expired: foodInfo.expired,
+        ...foodInfo,
       },
     });
   }

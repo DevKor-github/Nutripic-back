@@ -1,17 +1,18 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { food, storage, storage_type } from '@prisma/client';
+import { Food, Storage, StorageType } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { StorageRepository } from './storage.repository';
 import { FoodDto } from './dto/food.dto';
 import { UpdateFoodDto } from './dto/updateFood.dto';
+import { CreateFoodDto } from './dto/createFood.dto';
 
 @Injectable()
 export class StorageService {
   constructor(private storageRepository: StorageRepository) {}
 
   //식재료 추가
-  async createFoods(userId: string, Foods: FoodDto[]): Promise<food[]> {
+  async createFoods(userId: string, Foods: CreateFoodDto[]): Promise<Food[]> {
     //TODO: 식재료 유통기한 정보 추가
 
     const FoodsToAdd = Foods.map((food) => ({
@@ -25,7 +26,7 @@ export class StorageService {
   //내 식재료 가져오기
   async getStorageByUser(
     userId: string
-  ): Promise<{ storage: string; foods: food[] }[]> {
+  ): Promise<{ storage: string; foods: Food[] }[]> {
     const storages: Storage[] = [
       { userId, type: StorageType.freezer },
       { userId, type: StorageType.fridge },
@@ -50,16 +51,11 @@ export class StorageService {
     userId: string,
     foodId: number,
     amount: number
-  ): Promise<food> {
+  ): Promise<Food> {
     const foodToDelete = await this.checkIsFoodOwner(userId, foodId);
 
-    //같은 유통기한의 식재료가 아직 남아있다면 수량 정보만 변경
-    if (foodToDelete.amount > amount)
-      return this.storageRepository.updateFoodAmount(
-        foodId,
-        foodToDelete.amount - amount
-      );
-    else return this.storageRepository.deleteByFoodId(foodId);
+    //다 쓴 식재료 삭제
+    return this.storageRepository.deleteByFoodId(foodId);
   }
 
   //식재료 정보 수정
@@ -75,7 +71,7 @@ export class StorageService {
   }
 
   //수정하는 식재료가 로그인한 유저 소유인지 확인
-  async checkIsFoodOwner(userId: string, foodId: number): Promise<food> {
+  async checkIsFoodOwner(userId: string, foodId: number): Promise<Food> {
     const food = await this.storageRepository.findByFoodId(foodId);
     if (food.userId != userId) throw new UnauthorizedException();
     return food;
