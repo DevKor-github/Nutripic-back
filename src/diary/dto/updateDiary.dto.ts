@@ -1,10 +1,6 @@
 import { IsDateString, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class UpdateDiaryReqDto {
-  @IsNumber()
-  @IsNotEmpty()
-  id: number;
-
   @IsString()
   body: string;
 }
@@ -22,8 +18,9 @@ export class UpdateDiaryResDto {
   @IsString()
   body: string;
 
-  @IsString()
-  url: string;
+  // 이미지 업데이트 로직 완성 후 주석 해제
+  // @IsString()
+  // url: string;
 
   @IsDateString()
   @IsNotEmpty()

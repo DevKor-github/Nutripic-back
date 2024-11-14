@@ -1,9 +1,10 @@
 import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class GetAllDiaryReqDto {
-  @IsNumber()
-  index: number;
-}
+// index를 DTO 대신 Parameter로 받도록 수정
+// export class GetAllDiaryReqDto {
+//   @IsNumber()
+//   index: number;
+// }
 
 /**
  * TODO:
