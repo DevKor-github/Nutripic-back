@@ -48,11 +48,11 @@ export class RecipeRepository {
     >`
     SELECT r.id, r.name, r.difficulty, r.cooking_time
     FROM recipe r
-    JOIN ingredient i ON i.recipeId = r.id
+    JOIN recipe_ingredient i ON i.recipe_id = r.id
     GROUP BY r.id
     HAVING
       cardinality(array(
-        SELECT unnest(array_agg(i.name)) EXCEPT SELECT unnest(${userFoodList}::test[])
+        SELECT unnest(array_agg(i.name)) EXCEPT SELECT unnest(${userFoodList})
       )) = ${requiredIngredients}
     `;
 

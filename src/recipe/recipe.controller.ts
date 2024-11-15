@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -11,7 +12,6 @@ import { RecipeService } from './recipe.service';
 import { FirebaseAuthGuard } from 'src/auth/auth.guard';
 import { User } from 'src/utils/decorator/user.decorator';
 import { RecipeDto } from './dto/recipe.dto';
-import { ingredientDto } from './dto/ingredient.dto';
 import { RecipePreviewDto } from './dto/recipePreview.dto';
 import { RecipeFilterDto } from './dto/recipeFilter.dto';
 
@@ -32,10 +32,17 @@ export class RecipeController {
   @Get('filter_recipes')
   @HttpCode(HttpStatus.OK)
   getFilteredRecipe(
-    @User() uid: string,
     @Body() recipeFilter: RecipeFilterDto
   ): Promise<RecipePreviewDto[]> {
     return this.recipeService.getFilteredRecipe(recipeFilter);
+  }
+
+  //상세 레시피
+  @UseGuards(FirebaseAuthGuard)
+  @Get('detail/:id')
+  @HttpCode(HttpStatus.OK)
+  getRecipeDetail(@Param('id') recipeId: number): Promise<RecipeDto> {
+    return this.recipeService.viewRecipeDetails(recipeId);
   }
 
   //레시피 북마크 추가

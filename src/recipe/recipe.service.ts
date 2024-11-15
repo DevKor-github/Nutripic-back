@@ -71,7 +71,6 @@ export class RecipeService {
   }
   //excludeAllergic()
 
-  //TODO 레시피 상세보기
   //TODO 식품 카테고리 분류
   //DONE 식품 수량 트래킹 X
   //TODO 유저 알레르기 정보 저장, 필터링
