@@ -55,4 +55,11 @@ export class RecipeController {
   ): Promise<number> {
     return this.recipeService.addRecipeBookmark(uid, recipeId);
   }
+
+  @UseGuards(FirebaseAuthGuard)
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  viewRecipeBookmark(@User() userId): Promise<RecipePreviewDto[]> {
+    return this.recipeService.viewMyBookmark(userId);
+  }
 }

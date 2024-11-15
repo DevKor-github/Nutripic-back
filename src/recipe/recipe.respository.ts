@@ -11,9 +11,9 @@ import { ingredientDto } from './dto/ingredient.dto';
 export class RecipeRepository {
   constructor(private prisma: PrismaService) {}
 
-  async getUserFoodList(uid: string): Promise<string[]> {
+  async getUserFoodList(userId: string): Promise<string[]> {
     const foodList = await this.prisma.food.findMany({
-      where: { userId: uid },
+      where: { userId },
       select: { name: true },
     });
 
@@ -92,5 +92,30 @@ export class RecipeRepository {
         },
       },
     });
+  }
+
+  async addBookmark(userId: string, recipeId: number): Promise<number> {
+    const bookmark = await this.prisma.recipeBookmark.create({
+      data: { userId, recipeId },
+    });
+    return bookmark.recipeId;
+  }
+
+  async getBookmark(userId: string): Promise<RecipePreviewDto[]> {
+    const bookmarkList = await this.prisma.recipeBookmark.findMany({
+      where: { userId },
+      include: {
+        recipe: {
+          select: {
+            id: true,
+            name: true,
+            difficulty: true,
+            cookingTime: true,
+          },
+        },
+      },
+    });
+
+    return bookmarkList.map((bookmark) => bookmark.recipe);
   }
 }

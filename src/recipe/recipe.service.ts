@@ -62,12 +62,12 @@ export class RecipeService {
     return this.recipeRepository.getRecipeDetails(recipeId);
   }
 
-  async addRecipeBookmark(uid: string, recipeId: number): Promise<number> {
-    throw new Error('Method not implemented.');
+  async addRecipeBookmark(userId: string, recipeId: number): Promise<number> {
+    return this.recipeRepository.addBookmark(userId, recipeId);
   }
 
-  async viewMyBookmark(uid: string): Promise<RecipePreviewDto> {
-    throw new Error('Method not implemented.');
+  async viewMyBookmark(userId: string): Promise<RecipePreviewDto[]> {
+    return this.recipeRepository.getBookmark(userId);
   }
   //excludeAllergic()
 
