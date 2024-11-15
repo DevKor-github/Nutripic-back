@@ -26,7 +26,7 @@ import { DiaryModule } from './diary/diary.module';
     StorageModule,
     DiaryModule,
   ],
-  controllers: [AppController, DiaryController],
+  controllers: [AppController],
   providers: [
     {
       provide: APP_GUARD,
