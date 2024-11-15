@@ -1,32 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { RecipeRepository } from './recipe.respository';
 import { RecipeDto } from './dto/recipe.dto';
+import { ingredientDto } from './dto/ingredient.dto';
+import { RecipePreviewDto } from './dto/recipePreview.dto';
 
 @Injectable()
 export class RecipeService {
   constructor(private readonly recipeRepository: RecipeRepository) {}
 
-  async getRecommandedRecipe(uid: string): Promise<RecipeDto[]>[] {
+  async getRecommandedRecipe(uid: string): Promise<RecipePreviewDto[][]> {
     const userFoodList = await this.recipeRepository.getUserFoodList(uid);
+    const moreIngredient = 1;
 
     const recommendedRecipes =
-      await this.recipeRepository.getRecommendedRecipes(userFoodList);
-    const moreRecipes =
-      await this.recipeRepository.getMoreRecipes(userFoodList);
+      await this.recipeRepository.getRecommendedRecipes(userFoodList, 0);
+    const moreRecipes = await this.recipeRepository.getRecommendedRecipes(
+      userFoodList,
+      moreIngredient
+    );
 
+    //레시피의 수가 너무 적다면
+    //moreIngredient를 increment해서 더 많은 레시피 가져오기
+    //moreIngredient의 최대값 또는 레시피 개수로 제한하기
     return [recommendedRecipes, moreRecipes];
-
-    //현재 만들 수 있음 / 재료 더 필요함 리스트 분리
-    //완전 랜덤
-    //알레르기 식품 제외 --> 유저 테이블 수정 필요
-
-    //최초 3개 따로 분류
   }
 
   async getFilteredRecipe(
     uid: string,
-    ingredients: import('./dto/ingredient.dto').ingredientDto[]
-  ): Promise<import('./dto/recipe.dto').RecipeDto[]> {
+    ingredients: ingredientDto[]
+  ): Promise<RecipeDto[]> {
     throw new Error('Method not implemented.');
     //필터링 기준
     //식재료
