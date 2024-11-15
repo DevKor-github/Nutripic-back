@@ -72,7 +72,7 @@ model RecipeIngredient {
   recipe   Recipe @relation(fields: [recipeId], references: [id])
   recipeId Int    @map("recipe_id")
   name     String
-  amount    Float
+  amount    String
 
   @@id([recipeId, name])
   @@map("recipe_ingredient")
