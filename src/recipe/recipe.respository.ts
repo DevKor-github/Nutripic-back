@@ -5,6 +5,7 @@ import { RecipePreviewDto } from './dto/recipePreview.dto';
 import { number } from 'joi';
 import { plainToInstance } from 'class-transformer';
 import { RecipeFilterDto } from './dto/recipeFilter.dto';
+import { ingredientDto } from './dto/ingredient.dto';
 
 @Injectable()
 export class RecipeRepository {
@@ -75,6 +76,20 @@ export class RecipeRepository {
         name: true,
         difficulty: true,
         cookingTime: true,
+      },
+    });
+  }
+
+  async getRecipeDetails(recipeId: number): Promise<RecipeDto> {
+    return this.prisma.recipe.findUnique({
+      where: { id: recipeId },
+      include: {
+        recipeIngredient: {
+          select: {
+            name: true,
+            amount: true,
+          },
+        },
       },
     });
   }

@@ -58,7 +58,7 @@ enum StorageType {
 model Recipe {
   id           Int    @id @default(autoincrement())
   name         String @db.VarChar(255)
-  procedures   String
+  procedure   String
   difficulty   Int //? enum으로 난이도 구분하기?
   cookingTime Int  @map("cooking_time")//분 단위  
 
