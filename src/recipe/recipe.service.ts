@@ -3,11 +3,24 @@ import { RecipeRepository } from './recipe.respository';
 import { RecipeDto } from './dto/recipe.dto';
 import { ingredientDto } from './dto/ingredient.dto';
 import { RecipePreviewDto } from './dto/recipePreview.dto';
+import { RecipeFilterDto } from './dto/recipeFilter.dto';
 
 @Injectable()
 export class RecipeService {
   constructor(private readonly recipeRepository: RecipeRepository) {}
 
+  /**
+   *
+   * @param uid
+   * @returns RecipePreview[][] (id, name, difficulty, cookingTime)
+   *
+   * 유저가 가진 식재료로 만들 수 있는 레시피 리스트와
+   * 한두가지 식재료를 추가하면 만들 수 있는 레시피 리스트 반환
+   * [[만들 수 있는 레시피], [식재료 추가 필요 레시피]]
+   *
+   * 추가 필요한 식재료 수는 검색 결과에 따라 유연하게 결정
+   * TODO: (세부사항 결정 필요, 최대 n개 식재료 추가?)
+   */
   async getRecommandedRecipe(uid: string): Promise<RecipePreviewDto[][]> {
     const userFoodList = await this.recipeRepository.getUserFoodList(uid);
     const moreIngredient = 1;
@@ -25,14 +38,15 @@ export class RecipeService {
     return [recommendedRecipes, moreRecipes];
   }
 
+  /**
+   *
+   * @param uid
+   * @param recipeFilter
+   */
   async getFilteredRecipe(
-    uid: string,
-    ingredients: ingredientDto[]
-  ): Promise<RecipeDto[]> {
-    throw new Error('Method not implemented.');
-    //필터링 기준
-    //식재료
-    //난이도
+    recipeFilter: RecipeFilterDto
+  ): Promise<RecipePreviewDto[]> {
+    return this.recipeRepository.getFilteredRecipes(recipeFilter);
   }
 
   async addRecipeBookmark(uid: string, recipeId: number): Promise<number> {

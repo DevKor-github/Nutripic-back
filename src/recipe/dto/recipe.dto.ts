@@ -24,5 +24,5 @@ export class RecipeDto {
 
   @IsNumber()
   @IsNotEmpty()
-  cooking_time: number;
+  cookingTime: number;
 }
