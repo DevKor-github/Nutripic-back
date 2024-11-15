@@ -51,7 +51,7 @@ export class StorageController {
   @Delete('/delete')
   @HttpCode(HttpStatus.OK)
   deleteFood(@User() uid: string, @Body() food: DeleteFoodDto): Promise<Food> {
-    return this.storageService.deleteFood(uid, food.id, food.amount);
+    return this.storageService.deleteFood(uid, food.id);
   }
 
   //식재료 정보 수정
