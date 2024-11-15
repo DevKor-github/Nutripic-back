@@ -118,4 +118,14 @@ export class RecipeRepository {
 
     return bookmarkList.map((bookmark) => bookmark.recipe);
   }
+
+  async deleteBookmark(userId: string, recipeId: number): Promise<number> {
+    return (
+      await this.prisma.recipeBookmark.delete({
+        where: {
+          userId_recipeId: { userId, recipeId },
+        },
+      })
+    ).recipeId;
+  }
 }

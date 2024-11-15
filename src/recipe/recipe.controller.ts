@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -21,7 +22,7 @@ export class RecipeController {
 
   //레시피 추천 (현재 식재료 기반)
   @UseGuards(FirebaseAuthGuard)
-  @Get('view_recipes')
+  @Get('recommended')
   @HttpCode(HttpStatus.OK)
   getRecommendedRecipe(@User() uid: string): Promise<RecipePreviewDto[][]> {
     return this.recipeService.getRecommandedRecipe(uid);
@@ -29,7 +30,7 @@ export class RecipeController {
 
   //레시피 검색 (난이도, 시간)
   @UseGuards(FirebaseAuthGuard)
-  @Get('filter_recipes')
+  @Get('filter')
   @HttpCode(HttpStatus.OK)
   getFilteredRecipe(
     @Body() recipeFilter: RecipeFilterDto
@@ -47,7 +48,7 @@ export class RecipeController {
 
   //레시피 북마크 추가
   @UseGuards(FirebaseAuthGuard)
-  @Post()
+  @Post('bookmark/add')
   @HttpCode(HttpStatus.CREATED)
   addRecipeBookmark(
     @User() uid: string,
@@ -57,9 +58,19 @@ export class RecipeController {
   }
 
   @UseGuards(FirebaseAuthGuard)
-  @Get()
+  @Get('bookmark/view')
   @HttpCode(HttpStatus.OK)
   viewRecipeBookmark(@User() userId): Promise<RecipePreviewDto[]> {
     return this.recipeService.viewMyBookmark(userId);
+  }
+
+  @UseGuards(FirebaseAuthGuard)
+  @Delete('bookmark/delete')
+  @HttpCode(HttpStatus.OK)
+  deleteRecipeBookmark(
+    @User() userId,
+    @Body() recipeId: number
+  ): Promise<number> {
+    return this.recipeService.deleteBookmark(userId, recipeId);
   }
 }

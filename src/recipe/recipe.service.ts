@@ -69,6 +69,10 @@ export class RecipeService {
   async viewMyBookmark(userId: string): Promise<RecipePreviewDto[]> {
     return this.recipeRepository.getBookmark(userId);
   }
+
+  async deleteBookmark(userId: string, recipeId: number): Promise<number> {
+    return this.recipeRepository.deleteBookmark(userId, recipeId);
+  }
   //excludeAllergic()
 
   //TODO 식품 카테고리 분류
