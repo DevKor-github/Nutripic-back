@@ -1,14 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { RecipeRepository } from './recipe.respository';
+import { RecipeDto } from './dto/recipe.dto';
 
 @Injectable()
 export class RecipeService {
   constructor(private readonly recipeRepository: RecipeRepository) {}
 
-  getRecommandedRecipe(
-    uid: string
-  ): Promise<import('./dto/recipe.dto').RecipeDto[]> {
-    throw new Error('Method not implemented.');
+  async getRecommandedRecipe(uid: string): Promise<RecipeDto[]>[] {
+    const userFoodList = await this.recipeRepository.getUserFoodList(uid);
+
+    const recommendedRecipes =
+      await this.recipeRepository.getRecommendedRecipes(userFoodList);
+    const moreRecipes =
+      await this.recipeRepository.getMoreRecipes(userFoodList);
+
+    return [recommendedRecipes, moreRecipes];
 
     //현재 만들 수 있음 / 재료 더 필요함 리스트 분리
     //완전 랜덤
@@ -17,7 +23,7 @@ export class RecipeService {
     //최초 3개 따로 분류
   }
 
-  getFilteredRecipe(
+  async getFilteredRecipe(
     uid: string,
     ingredients: import('./dto/ingredient.dto').ingredientDto[]
   ): Promise<import('./dto/recipe.dto').RecipeDto[]> {
@@ -27,7 +33,7 @@ export class RecipeService {
     //난이도
   }
 
-  addRecipeBookmark(uid: string, recipeId: number): Promise<number> {
+  async addRecipeBookmark(uid: string, recipeId: number): Promise<number> {
     //bookmark
   }
 
