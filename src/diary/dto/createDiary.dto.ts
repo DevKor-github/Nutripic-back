@@ -21,5 +21,5 @@ export class CreateDiaryResDto {
 
   @IsString()
   @IsOptional()
-  url?: string;
+  urls?: string[];
 }
