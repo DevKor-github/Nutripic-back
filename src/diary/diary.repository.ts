@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Diary } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateDiaryResDto } from './dto/createDiary.dto';
 
 @Injectable()
 export class DiaryRepository {
@@ -62,14 +63,33 @@ export class DiaryRepository {
   /**
    * TODO: pre-signed-url을 db에 저장하는 로직 추가
    */
-  async createDiary(userId: string, body: string): Promise<Diary> {
-    return await this.prisma.diary.create({
-      data: {
-        userId: userId,
-        body: body,
-        createdAt: new Date(),
-      },
-    });
+  async createDiary(
+    userId: string,
+    body: string,
+    urls: string[]
+  ): Promise<CreateDiaryResDto> {
+    return await this.prisma.diary
+      .create({
+        data: {
+          userId: userId,
+          body: body,
+          createdAt: new Date(),
+        },
+      })
+      .then((diary) => {
+        urls.forEach(async (url) => {
+          await this.prisma.diaryImage.create({
+            data: {
+              diaryId: diary.id,
+              url: url,
+            },
+          });
+        });
+        return {
+          id: diary.id,
+          url: urls,
+        };
+      });
   }
 
   async updateDiary(diaryId: number, body: string) {

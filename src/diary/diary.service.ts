@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { DiaryRepository } from './diary.repository';
 import { CreateDiaryReqDto, CreateDiaryResDto } from './dto/createDiary.dto';
 import { UpdateDiaryReqDto, UpdateDiaryResDto } from './dto/updateDiary.dto';
@@ -65,10 +70,14 @@ export class DiaryService {
 
   async createDiary(
     userId: string,
-    createDiaryReqDto: CreateDiaryReqDto
+    body: string,
+    urls: string[]
   ): Promise<CreateDiaryResDto> {
-    const { body } = createDiaryReqDto;
-    return await this.diaryRepository.createDiary(userId, body);
+    return (await this.diaryRepository
+      .createDiary(userId, body, urls)
+      .catch((err) => {
+        if (err) throw new InternalServerErrorException(err);
+      })) as CreateDiaryResDto;
   }
 
   async updateDiary(

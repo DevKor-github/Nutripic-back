@@ -10,8 +10,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { FirebaseAuthGuard } from './auth/auth.guard';
 import { StorageModule } from './storage/storage.module';
-import { DiaryController } from './diary/diary.controller';
 import { DiaryModule } from './diary/diary.module';
+import { AwsModule } from './aws/aws.module';
 
 @Module({
   imports: [
@@ -25,6 +25,7 @@ import { DiaryModule } from './diary/diary.module';
     PrismaModule,
     StorageModule,
     DiaryModule,
+    AwsModule,
   ],
   controllers: [AppController],
   providers: [

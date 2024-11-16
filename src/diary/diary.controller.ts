@@ -4,10 +4,13 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  InternalServerErrorException,
   Logger,
   Param,
   Patch,
   Post,
+  UploadedFiles,
+  UseInterceptors,
 } from '@nestjs/common';
 import { DiaryService } from './diary.service';
 import { Public } from 'src/auth/auth.guard';
@@ -16,11 +19,16 @@ import { CreateDiaryReqDto, CreateDiaryResDto } from './dto/createDiary.dto';
 import { UpdateDiaryReqDto, UpdateDiaryResDto } from './dto/updateDiary.dto';
 import { GetAllDiaryResDto } from './dto/getAllDiary.dto';
 import { GetDiaryResDto } from './dto/getDiary.dto';
+import { AwsService } from '../aws/aws.service';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 // @Public()
 @Controller('diary')
 export class DiaryController {
-  constructor(private readonly diaryService: DiaryService) {}
+  constructor(
+    private readonly diaryService: DiaryService,
+    private readonly awsService: AwsService
+  ) {}
   private logger: Logger = new Logger(DiaryController.name);
 
   /**
@@ -58,13 +66,20 @@ export class DiaryController {
    * 2. 한번에 등록할 수 있는 이미지는 몇개까지로 생각하시나요?
    */
   @Post('/add')
+  @UseInterceptors(FilesInterceptor('file'))
   @HttpCode(HttpStatus.CREATED)
-  createDiary(
+  async createDiary(
     @User() uid: string,
-    @Body() createDiaryReqDto: CreateDiaryReqDto
+    @Body() data: string, // 파일과 동시에 업로드하는 multipart/form-data 형식의 데이터를 받기 위해 data: {"body": ...} 형식의 string으로 받음
+    @UploadedFiles() files: Express.Multer.File[]
   ): Promise<CreateDiaryResDto> {
     this.logger.log('Create Diary');
-    return this.diaryService.createDiary(uid, createDiaryReqDto);
+    const createDiaryReqDto: CreateDiaryReqDto = JSON.parse(data['data']);
+    const { body } = createDiaryReqDto;
+
+    return await this.awsService.uploadFiles(uid, files).then(async (urls) => {
+      return await this.diaryService.createDiary(uid, body, urls);
+    });
   }
 
   @Patch('/update/:diaryId')
