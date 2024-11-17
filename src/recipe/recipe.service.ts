@@ -23,16 +23,24 @@ export class RecipeService {
    */
   async getRecommandedRecipe(uid: string): Promise<RecipePreviewDto[][]> {
     const userFoodList = await this.recipeRepository.getUserFoodList(uid);
-    const moreIngredient = 1;
+    const moreIngredients = 2;
 
     const recommendedRecipes =
-      await this.recipeRepository.getRecommendedRecipes(userFoodList, 0);
-    const moreRecipes = await this.recipeRepository.getRecommendedRecipes(
-      userFoodList,
-      moreIngredient
-    );
+      await this.recipeRepository.getRecommendedRecipes(
+        userFoodList,
+        moreIngredients
+      );
 
-    return [recommendedRecipes, moreRecipes];
+    //만들 수 있는 레시피와 없는 레시피 구분
+    const splitIndex = recommendedRecipes.findIndex(
+      (recipe) => recipe.missingIngredients > 0
+    );
+    if (splitIndex === -1) return [recommendedRecipes, []]; //모든 레시피 만들 수 있는 경우
+
+    const nowRecipes = recommendedRecipes.slice(0, splitIndex);
+    const moreRecipes = recommendedRecipes.slice(1, splitIndex);
+
+    return [nowRecipes, moreRecipes];
   }
 
   /** 필터링 된 레시피 리스트

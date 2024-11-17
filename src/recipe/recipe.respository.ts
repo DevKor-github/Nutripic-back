@@ -44,16 +44,23 @@ export class RecipeRepository {
         name: string;
         difficulty: number;
         cookingTime: number;
+        missingIngredient: number;
       }>
     >`
-    SELECT r.id, r.name, r.difficulty, r.cooking_time
-    FROM recipe r
-    JOIN recipe_ingredient i ON i.recipe_id = r.id
-    GROUP BY r.id
-    HAVING
-      cardinality(array(
-        SELECT unnest(array_agg(i.name)) EXCEPT SELECT unnest(${userFoodList})
-      )) = ${requiredIngredients}
+    WITH recipe_missing_ingredient AS (
+      SELECT r.id, r.name, r.difficulty, r.cooking_time, 
+        cardinality(array(
+          SELECT unnest(array_agg(i.name)) 
+          EXCEPT SELECT unnest(${userFoodList})
+          )) AS missing_ingredients
+      FROM recipe r
+      JOIN recipe_ingredient i ON i.recipe_id = r.id
+      GROUP BY r.id
+    )
+    SELECT *
+    FROM recipe_missing_ingredient
+    WHERE missing_ingredient <= ${requiredIngredients}
+    ORDER BY missing_ingredients ASC;
     `;
 
     return plainToInstance(RecipePreviewDto, recipes);
