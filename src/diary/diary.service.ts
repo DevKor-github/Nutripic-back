@@ -36,13 +36,13 @@ export class DiaryService {
       ).map(async (diary) => {
         const url = await this.diaryRepository
           .getUrlById(diary.id)
-          .then((url) => {
-            if (!url) return { url: undefined };
-            return url;
+          .then((element) => {
+            if (!element.url) return undefined;
+            return element.url;
           });
         return {
           id: diary.id,
-          url: url.url,
+          url: url,
           createdAt: diary.createdAt,
         };
       })
@@ -73,11 +73,15 @@ export class DiaryService {
     body: string,
     urls: string[]
   ): Promise<CreateDiaryResDto> {
-    return (await this.diaryRepository
-      .createDiary(userId, body, urls)
+    const diaryId = (await this.diaryRepository
+      .createDiary(userId, body)
+      .then(async (diaryId) => {
+        return await this.diaryRepository.uploadImage(diaryId, urls);
+      })
       .catch((err) => {
         if (err) throw new InternalServerErrorException(err);
-      })) as CreateDiaryResDto;
+      })) as number;
+    return { id: diaryId, urls: urls };
   }
 
   async updateDiary(
