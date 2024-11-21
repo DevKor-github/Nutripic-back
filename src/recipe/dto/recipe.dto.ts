@@ -12,7 +12,7 @@ export class RecipeDto {
 
   @IsString()
   @IsNotEmpty()
-  recipeIngredient: ingredientDto[];
+  ingredient: ingredientDto[];
 
   @IsString()
   @IsOptional() //레시피 선택 시 상세 레시피 리턴
