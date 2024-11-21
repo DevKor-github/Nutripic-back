@@ -35,7 +35,7 @@ model Food {
   id           Int          @id @default(autoincrement())
   storedIn     Storage      @relation(fields: [userId, storageType], references: [userId, type]) 
   userId       String
-  storageType StorageType
+  storageType  StorageType
   name         String       @db.VarChar(255)
   exists       Boolean      @default(true)
   class1       String       @db.VarChar(255) //대분류
@@ -58,24 +58,36 @@ enum StorageType {
 model Recipe {
   id           Int    @id @default(autoincrement())
   name         String @db.VarChar(255)
-  procedure   String
+  procedure    String
   difficulty   Int //? enum으로 난이도 구분하기?
-  cookingTime Int  @map("cooking_time")//분 단위  
+  cookingTime  Int  @map("cooking_time")//분 단위  
 
-  recipeIngredient RecipeIngredient[]
+  ingredient IngredientRecipeIndex[]
   recipeBookmark  RecipeBookmark[]
 
   @@map("recipe")
 }
 
-model RecipeIngredient {
-  recipe   Recipe @relation(fields: [recipeId], references: [id])
-  recipeId Int    @map("recipe_id")
-  name     String
-  amount    String
+model Ingredient {
+  name     String @id @db.VarChar(255)
+  amount   String
 
-  @@id([recipeId, name])
+  recipes  IngredientRecipeIndex[]
+
   @@map("recipe_ingredient")
+}
+
+model IngredientRecipeIndex {
+  recipeIds Int @map("recipe_ids")
+  recipe Recipe @relation(fields: [recipeIds], references: [id])
+
+  ingredientNames String @map("ingredient_names")
+  ingredient Ingredient @relation(fields:[ingredientNames], references: [name])
+
+  amount String @db.VarChar(255)
+
+  @@id([ingredientNames, recipeIds])
+  @@map("ingredient_recipe_index")
 }
 
 model RecipeBookmark {
