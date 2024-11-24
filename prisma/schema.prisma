@@ -78,7 +78,7 @@ model Ingredient {
 }
 
 model IngredientRecipeIndex {
-  recipeId Int @map("recipe_ids")
+  recipeId Int @map("recipe_id")
   recipe Recipe @relation(fields: [recipeId], references: [id])
 
   ingredientName String @map("ingredient_name")

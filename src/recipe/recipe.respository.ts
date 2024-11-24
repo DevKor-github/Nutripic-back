@@ -22,7 +22,6 @@ export class RecipeRepository {
     userFoodList: string[],
     requiredIngredients: number
   ): Promise<RecipePreviewDto[]> {
-    //TODO: typing raw result
     /**
      * 레시피 프리뷰 (id, name, difficulty, cookingTime) 반환
      *
@@ -30,13 +29,16 @@ export class RecipeRepository {
      *  userFoodList = 유저가 가진 식재료 이름
      *  requiredIngredients = 추가로 필요한 식재료 갯수
      *
-     * Query :
-     *  각 레시피에 필요한 식재료 리스트와 유저 식재료 리스트 비교
-     *  레시피 식재료 중 유저에게 없는 식재료가 ${requiredIngredients}개인 레시피 반환
-     *  ex) requiredIngredients = 0일 경우, 유저가 당장 만들 수 있는 레시피를 리턴
+     * Query:
+     *  inverted index 사용
+     *  레시피ID와 레시피에 사용되는 개별 식재료 이름을 저장하는 IngredientRecipeIndex에서
+     *  유저가 가진 식재료를 검색,
+     *  해당 식재료로 만들 수 있는 레시피 ID를 찾는다.
+     *  이때 각 레시피ID가 몇 번 나오는지 COUNT(*)해, 각 레시피ID에 필요한 식재료 개수 (ingredient_count)와 비교한다.
+     *  레시피ID가 출현 횟수와 레시피에 필요한 식재료 개수가 같다면, 유저가 해당 레시피에 필요한 식재료를 모두 가지고 있음
      */
 
-    const recipes = await this.prisma.$queryRaw<
+    const recipe = await this.prisma.$queryRaw<
       Array<{
         id: number;
         name: string;
@@ -45,23 +47,19 @@ export class RecipeRepository {
         missingIngredient: number;
       }>
     >`
-    WITH recipe_missing_ingredient AS (
-      SELECT r.id, r.name, r.difficulty, r.cooking_time, 
-        cardinality(array(
-          SELECT unnest(array_agg(i.name)) 
-          EXCEPT SELECT unnest(${userFoodList})
-          )) AS missing_ingredients
-      FROM recipe r
-      JOIN recipe_ingredient i ON i.recipe_id = r.id
-      GROUP BY r.id
-    )
-    SELECT *
-    FROM recipe_missing_ingredient
-    WHERE missing_ingredient <= ${requiredIngredients}
-    ORDER BY missing_ingredients ASC;
+      SELECT r.id, r.name, r.difficulty, r.cooking_time, rc.COUNT
+      FROM (
+      SELECT COUNT(*), recipe_id
+        FROM ingredient_recipe_index
+        WHERE ingredient IN ${userFoodList}
+        GROUP BY recipe_id
+      ) AS rc
+      NATURAL JOIN recipe AS r
+      WHERE r.ingredient_count <= rc.COUNT + ${requiredIngredients}
+      ORDER BY rc.COUNT ASC;
     `;
 
-    return plainToInstance(RecipePreviewDto, recipes);
+    return plainToInstance(RecipePreviewDto, recipe);
   }
 
   async getFilteredRecipes(
