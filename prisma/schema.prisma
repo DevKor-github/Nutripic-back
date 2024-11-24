@@ -61,6 +61,7 @@ model Recipe {
   procedure    String
   difficulty   Int //? enum으로 난이도 구분하기?
   cookingTime  Int  @map("cooking_time")//분 단위  
+  ingredient_count Int
 
   ingredient IngredientRecipeIndex[]
   recipeBookmark  RecipeBookmark[]
