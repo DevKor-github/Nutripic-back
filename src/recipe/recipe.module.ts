@@ -5,7 +5,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { StorageService } from 'src/storage/storage.service';
-import { RecipeRepository } from './recipe.respository';
+import { RecipeRepository } from './recipe.repository';
 import { StorageRepository } from 'src/storage/storage.repository';
 
 @Module({

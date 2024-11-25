@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
-import { FirebaseAuthGuard } from 'src/auth/auth.guard';
+import { FirebaseAuthGuard, Public } from 'src/auth/auth.guard';
 import { User } from 'src/utils/decorator/user.decorator';
 import { RecipeDto } from './dto/recipe.dto';
 import { RecipePreviewDto } from './dto/recipePreview.dto';
@@ -24,8 +24,8 @@ export class RecipeController {
   @UseGuards(FirebaseAuthGuard)
   @Get('recommended')
   @HttpCode(HttpStatus.OK)
-  getRecommendedRecipe(@User() uid: string): Promise<RecipePreviewDto[][]> {
-    return this.recipeService.getRecommandedRecipe(uid);
+  getRecommendedRecipe(@User() userId: string): Promise<number[][]> {
+    return this.recipeService.getRecommandedRecipe(userId);
   }
 
   //레시피 검색 (난이도, 시간)
@@ -51,10 +51,10 @@ export class RecipeController {
   @Post('bookmark/add')
   @HttpCode(HttpStatus.CREATED)
   addRecipeBookmark(
-    @User() uid: string,
+    @User() userId: string,
     @Body() recipeId: number
   ): Promise<number> {
-    return this.recipeService.addRecipeBookmark(uid, recipeId);
+    return this.recipeService.addRecipeBookmark(userId, recipeId);
   }
 
   @UseGuards(FirebaseAuthGuard)

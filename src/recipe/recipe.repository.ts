@@ -22,9 +22,9 @@ export class RecipeRepository {
   async getRecommendedRecipes(
     userFoodList: string[],
     requiredIngredients: number
-  ): Promise<RecipePreviewDto[]> {
+  ): Promise<number[][]> {
     /**
-     * 레시피 프리뷰 (id, name, difficulty, cookingTime) 반환
+     * [레시피ID, 추가 필요한 식재료 개수] 리스트 반환
      *
      * Parameter :
      *  userFoodList = 유저가 가진 식재료 이름
@@ -39,13 +39,10 @@ export class RecipeRepository {
      *  레시피ID가 출현 횟수와 레시피에 필요한 식재료 개수가 같다면, 유저가 해당 레시피에 필요한 식재료를 모두 가지고 있음
      */
 
-    const recipe = await this.prisma.$queryRaw<
+    const rawRecipeInfo = await this.prisma.$queryRaw<
       Array<{
-        id: number;
-        name: string;
-        difficulty: number;
-        cookingTime: number;
-        missingIngredient: number;
+        recipe_id: number;
+        missing_ingredients: number;
       }>
     >`
       WITH recipe_with_missing AS (
@@ -62,8 +59,11 @@ export class RecipeRepository {
       WHERE missing_ingredients <= ${requiredIngredients}
       ORDER BY missing_ingredients ASC;
     `;
-
-    return plainToInstance(RecipePreviewDto, recipe);
+    const result: number[][] = rawRecipeInfo.map((info) => [
+      info.recipe_id,
+      info.missing_ingredients,
+    ]);
+    return result;
   }
 
   async getFilteredRecipes(

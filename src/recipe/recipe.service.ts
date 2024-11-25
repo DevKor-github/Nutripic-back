@@ -12,7 +12,7 @@ export class RecipeService {
   /** 추천 레시피 리스트
    *
    * @param uid
-   * @returns RecipePreview[][] (id, name, difficulty, cookingTime)
+   * @returns number[][] (recipeId, missingIngredients)
    *
    * 유저가 가진 식재료로 만들 수 있는 레시피 리스트와
    * 한두가지 식재료를 추가하면 만들 수 있는 레시피 리스트 반환
@@ -21,7 +21,7 @@ export class RecipeService {
    * 추가 필요한 식재료 수는 검색 결과에 따라 유연하게 결정
    * ? (세부사항 결정 필요, 최대 n개 식재료 추가?)
    */
-  async getRecommandedRecipe(uid: string): Promise<RecipePreviewDto[][]> {
+  async getRecommandedRecipe(uid: string): Promise<number[][]> {
     const userFoodList = await this.recipeRepository.getUserFoodList(uid);
 
     const moreIngredients = 2;
@@ -33,13 +33,17 @@ export class RecipeService {
       );
 
     //만들 수 있는 레시피와 없는 레시피 구분
-    const splitIndex = recommendedRecipes.findIndex(
-      (recipe) => recipe.missingIngredients > 0
-    );
-    if (splitIndex === -1) return [recommendedRecipes, []]; //모든 레시피 만들 수 있는 경우
+    //레시피ID만 반환
+    const splitIndex = recommendedRecipes.findIndex((recipe) => recipe[1] > 0);
+    if (splitIndex === -1)
+      return [recommendedRecipes.map((info) => info[0]), []]; //모든 레시피 만들 수 있는 경우
 
-    const nowRecipes = recommendedRecipes.slice(0, splitIndex);
-    const moreRecipes = recommendedRecipes.slice(1, splitIndex);
+    const nowRecipes = recommendedRecipes
+      .slice(0, splitIndex)
+      .map((info) => info[0]);
+    const moreRecipes = recommendedRecipes
+      .slice(splitIndex)
+      .map((info) => info[0]);
 
     return [nowRecipes, moreRecipes];
   }
