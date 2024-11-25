@@ -60,8 +60,7 @@ model Recipe {
   name         String @db.VarChar(255)
   procedure    String
   difficulty   Int //? enum으로 난이도 구분하기?
-  cookingTime  Int  @map("cooking_time")//분 단위  
-  ingredient_count Int
+  cookingTime  Int  @map("cooking_time")//분 단위
 
   ingredient IngredientRecipeIndex[]
   recipeBookmark  RecipeBookmark[]
@@ -71,11 +70,10 @@ model Recipe {
 
 model Ingredient {
   name     String @id @db.VarChar(255)
-  amount   String
 
   recipes  IngredientRecipeIndex[]
 
-  @@map("recipe_ingredient")
+  @@map("ingredient")
 }
 
 model IngredientRecipeIndex {
@@ -86,6 +84,8 @@ model IngredientRecipeIndex {
   ingredient Ingredient @relation(fields:[ingredientName], references: [name])
 
   amount String @db.VarChar(255)
+
+  ingredientCount Int @map("ingredient_count")
 
   @@id([ingredientName, recipeId])
   @@map("ingredient_recipe_index")

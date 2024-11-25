@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RecipeRepository } from './recipe.respository';
+import { RecipeRepository } from './recipe.repository';
 import { RecipeDto } from './dto/recipe.dto';
 import { ingredientDto } from './dto/ingredient.dto';
 import { RecipePreviewDto } from './dto/recipePreview.dto';
@@ -23,6 +23,7 @@ export class RecipeService {
    */
   async getRecommandedRecipe(uid: string): Promise<RecipePreviewDto[][]> {
     const userFoodList = await this.recipeRepository.getUserFoodList(uid);
+
     const moreIngredients = 2;
 
     const recommendedRecipes =
