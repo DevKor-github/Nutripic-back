@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -26,7 +27,14 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(FirebaseAuthGuard)
   @Get('create')
-  create(@User('uid') uid: string): Promise<string> {
+  createUser(@User('uid') uid: string): Promise<string> {
     return this.userService.createUser(uid);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(FirebaseAuthGuard)
+  @Delete('delete')
+  deleteUser(@User('uid') uid: string): Promise<string> {
+    return this.userService.deleteUser(uid);
   }
 }
