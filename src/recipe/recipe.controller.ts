@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
-import { FirebaseAuthGuard, Public } from 'src/auth/auth.guard';
+import { FirebaseAuthGuard } from 'src/auth/auth.guard';
 import { User } from 'src/utils/decorator/user.decorator';
 import { RecipeDto } from './dto/recipe.dto';
 import { RecipePreviewDto } from './dto/recipePreview.dto';
@@ -31,7 +31,7 @@ export class RecipeController {
   @UseGuards(FirebaseAuthGuard)
   @Get('previews')
   @HttpCode(HttpStatus.OK)
-  getRecipePreviews(recipeIds: number[]): Promise<RecipePreviewDto[]> {
+  getRecipePreviews(@Body() recipeIds: number[]): Promise<RecipePreviewDto[]> {
     return this.recipeService.getRecipePreviews(recipeIds);
   }
 
