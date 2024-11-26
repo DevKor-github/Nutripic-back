@@ -87,6 +87,20 @@ export class RecipeRepository {
     });
   }
 
+  async getRecipePreviews(recipeIds: number[]): Promise<RecipePreviewDto[]> {
+    return this.prisma.recipe.findMany({
+      where: {
+        id: { in: recipeIds },
+      },
+      select: {
+        id: true,
+        name: true,
+        difficulty: true,
+        cookingTime: true,
+      },
+    });
+  }
+
   async getRecipeDetails(recipeId: number): Promise<RecipeDto> {
     return this.prisma.recipe.findUnique({
       where: { id: recipeId },

@@ -34,8 +34,8 @@ model Storage {
 model Food {
   id           Int          @id @default(autoincrement())
   storedIn     Storage      @relation(fields: [userId, storageType], references: [userId, type]) 
-  userId       String
-  storageType  StorageType
+  userId       String       @map("user_id")
+  storageType  StorageType  @map("storage_type")
   name         String       @db.VarChar(255)
   exists       Boolean      @default(true)
   class1       String       @db.VarChar(255) //대분류

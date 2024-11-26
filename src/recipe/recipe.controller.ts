@@ -28,6 +28,13 @@ export class RecipeController {
     return this.recipeService.getRecommandedRecipe(userId);
   }
 
+  @UseGuards(FirebaseAuthGuard)
+  @Get('previews')
+  @HttpCode(HttpStatus.OK)
+  getRecipePreviews(recipeIds: number[]): Promise<RecipePreviewDto[]> {
+    return this.recipeService.getRecipePreviews(recipeIds);
+  }
+
   //레시피 검색 (난이도, 시간)
   @UseGuards(FirebaseAuthGuard)
   @Get('filter')

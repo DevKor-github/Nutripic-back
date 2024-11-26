@@ -48,6 +48,18 @@ export class RecipeService {
     return [nowRecipes, moreRecipes];
   }
 
+  /** 레시피 프리뷰 정보 리스트
+   *
+   * @param recipeIds
+   * @returns recipePreview []
+   *
+   * 프론트에서 레시피ID 리스트를 요청으로 보내면,
+   * 해당 레시피들의 프리뷰를 보냄 (id, 이름, 난이도, 조리시간)
+   */
+  async getRecipePreviews(recipeIds: number[]): Promise<RecipePreviewDto[]> {
+    return this.recipeRepository.getRecipePreviews(recipeIds);
+  }
+
   /** 필터링 된 레시피 리스트
    *
    * @param uid
@@ -75,6 +87,7 @@ export class RecipeService {
     return this.recipeRepository.getRecipeDetails(recipeId);
   }
 
+  //북마크 관련 기능
   async addRecipeBookmark(userId: string, recipeId: number): Promise<number> {
     return this.recipeRepository.addBookmark(userId, recipeId);
   }
@@ -89,6 +102,5 @@ export class RecipeService {
   //excludeAllergic()
 
   //TODO 식품 카테고리 분류
-  //DONE 식품 수량 트래킹 X
   //TODO 유저 알레르기 정보 저장, 필터링
 }
