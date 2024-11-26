@@ -57,7 +57,8 @@ export class RecipeService {
    * 해당 레시피들의 프리뷰를 보냄 (id, 이름, 난이도, 조리시간)
    */
   async getRecipePreviews(recipeIds: number[]): Promise<RecipePreviewDto[]> {
-    return this.recipeRepository.getRecipePreviews(recipeIds);
+    const previews = await this.recipeRepository.getRecipePreviews(recipeIds);
+    return recipeIds.map((id) => previews.find((preview) => preview.id === id));
   }
 
   /** 필터링 된 레시피 리스트

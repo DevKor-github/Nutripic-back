@@ -31,7 +31,9 @@ export class RecipeController {
   @UseGuards(FirebaseAuthGuard)
   @Get('previews')
   @HttpCode(HttpStatus.OK)
-  getRecipePreviews(@Body() recipeIds: number[]): Promise<RecipePreviewDto[]> {
+  getRecipePreviews(
+    @Body('recipeIds') recipeIds: number[]
+  ): Promise<RecipePreviewDto[]> {
     return this.recipeService.getRecipePreviews(recipeIds);
   }
 
@@ -59,7 +61,7 @@ export class RecipeController {
   @HttpCode(HttpStatus.CREATED)
   addRecipeBookmark(
     @User() userId: string,
-    @Body() recipeId: number
+    @Body('recipeId') recipeId: number
   ): Promise<number> {
     return this.recipeService.addRecipeBookmark(userId, recipeId);
   }
@@ -76,7 +78,7 @@ export class RecipeController {
   @HttpCode(HttpStatus.OK)
   deleteRecipeBookmark(
     @User() userId,
-    @Body() recipeId: number
+    @Body('recipeId') recipeId: number
   ): Promise<number> {
     return this.recipeService.deleteBookmark(userId, recipeId);
   }
