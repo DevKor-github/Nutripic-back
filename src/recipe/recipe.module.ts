@@ -13,7 +13,6 @@ import { StorageRepository } from 'src/storage/storage.repository';
   providers: [
     RecipeService,
     PrismaService,
-    UserService,
     StorageService,
     StorageRepository,
     RecipeRepository,

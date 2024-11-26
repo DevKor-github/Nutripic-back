@@ -4,10 +4,11 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Post,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { FirebaseAuthGuard } from 'src/auth/auth.guard';
+import { FirebaseAuthGuard, Public } from 'src/auth/auth.guard';
 import { User } from 'src/utils/decorator/user.decorator';
 import { UserService } from './user.service';
 
@@ -26,7 +27,7 @@ export class UserController {
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(FirebaseAuthGuard)
-  @Get('create')
+  @Post('create')
   createUser(@User('uid') uid: string): Promise<string> {
     return this.userService.createUser(uid);
   }

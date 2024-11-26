@@ -7,7 +7,7 @@ export class UserService {
 
   //유저 생성
   async createUser(uid: string): Promise<string> {
-    if (this.userRepository.checkUserExists(uid))
+    if (await this.userRepository.checkUserExists(uid))
       throw new BadRequestException('이미 존재하는 uid 입니다.');
 
     return this.userRepository.createUser(uid);
@@ -15,7 +15,7 @@ export class UserService {
 
   //유저 삭제
   async deleteUser(uid: string): Promise<string> {
-    if (!this.userRepository.checkUserExists(uid))
+    if (await !this.userRepository.checkUserExists(uid))
       throw new BadRequestException('존재하지 않는 uid 입니다.');
 
     return this.userRepository.deleteUser(uid);

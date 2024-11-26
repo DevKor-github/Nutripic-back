@@ -28,7 +28,11 @@ export class UserRepository {
   }
 
   async checkUserExists(uid: string): Promise<boolean> {
-    if (await this.prisma.user.findUnique({ where: { uid } })) return true;
-    else return false;
+    const user = await this.prisma.user.findUnique({
+      where: { uid },
+    });
+    if (user !== null) {
+      return true;
+    } else return false;
   }
 }
