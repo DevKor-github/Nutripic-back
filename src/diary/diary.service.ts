@@ -1,14 +1,14 @@
 import {
+  BadGatewayException,
   Injectable,
-  InternalServerErrorException,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { DiaryRepository } from './diary.repository';
-import { CreateDiaryReqDto, CreateDiaryResDto } from './dto/createDiary.dto';
 import { UpdateDiaryReqDto, UpdateDiaryResDto } from './dto/updateDiary.dto';
 import { GetDiaryResDto } from './dto/getDiary.dto';
 import { GetAllDiaryResDto } from './dto/getAllDiary.dto';
+import { CreateDiaryReqDto } from './dto/createDiary.dto';
 
 @Injectable()
 export class DiaryService {
@@ -26,62 +26,44 @@ export class DiaryService {
     const targetMonth = targetDate.getMonth();
     const targetYear = targetDate.getFullYear();
 
-    return Promise.all(
-      (
-        await this.diaryRepository.getDiaryByUser(
-          userId,
-          targetYear,
-          targetMonth
-        )
-      ).map(async (diary) => {
-        const url = await this.diaryRepository
-          .getUrlById(diary.id)
-          .then((element) => {
-            if (!element.url) return undefined;
-            return element.url;
-          });
-        return {
-          id: diary.id,
-          url: url,
-          createdAt: diary.createdAt,
-        };
-      })
-    ).then((diary: GetAllDiaryResDto[]) => {
-      return diary;
-    });
+    const diaries = await this.diaryRepository.getDiaryByUser(
+      userId,
+      targetYear,
+      targetMonth
+    );
+    return diaries.map((diary) => ({
+      id: diary.id,
+      url: diary.url,
+      date: diary.date,
+    }));
   }
 
   async getDiaryById(diaryId: number): Promise<GetDiaryResDto> {
-    return await this.diaryRepository
-      .getDiaryById(diaryId)
-      .then(async (diary) => {
-        const urls = (await this.diaryRepository.getAllUrlById(diaryId)).map(
-          (element) => {
-            return element.url;
-          }
-        );
-        return {
-          id: diary.id,
-          body: diary.body,
-          urls: urls,
-        };
-      });
+    const diary = await this.diaryRepository.getDiaryById(diaryId);
+    if (!diary)
+      throw new NotFoundException('해당 ID의 다이어리가 존재하지 않습니다.');
+    return {
+      id: diary.id,
+      body: diary.body,
+      url: diary.url,
+      date: diary.date,
+    };
   }
 
   async createDiary(
     userId: string,
-    body: string,
-    urls: string[]
-  ): Promise<CreateDiaryResDto> {
-    const diaryId = (await this.diaryRepository
-      .createDiary(userId, body)
-      .then(async (diaryId) => {
-        return await this.diaryRepository.uploadImage(diaryId, urls);
-      })
-      .catch((err) => {
-        if (err) throw new InternalServerErrorException(err);
-      })) as number;
-    return { id: diaryId, urls: urls };
+    createDiaryReqDto: CreateDiaryReqDto,
+    url: string
+  ): Promise<void> {
+    const { body, date } = createDiaryReqDto;
+    const diary = await this.diaryRepository.createDiary(
+      userId,
+      body,
+      url,
+      new Date(date)
+    );
+    if (!diary) throw new BadGatewayException('다이어리 생성에 실패했습니다.');
+    return;
   }
 
   async updateDiary(
@@ -92,7 +74,22 @@ export class DiaryService {
     if (!diary)
       throw new NotFoundException('해당 ID의 다이어리가 존재하지 않습니다.');
 
-    const { body } = updateDiaryReqDto;
-    return await this.diaryRepository.updateDiary(diaryId, body);
+    const { body, date } = updateDiaryReqDto;
+
+    const updatedDiary = await this.diaryRepository.updateDiary(
+      diaryId,
+      body,
+      new Date(date)
+    );
+
+    if (!updatedDiary)
+      throw new BadGatewayException('다이어리 업데이트에 실패했습니다.');
+
+    return {
+      id: updatedDiary.id,
+      body: updatedDiary.body,
+      url: updatedDiary.url,
+      date: updatedDiary.date,
+    } as UpdateDiaryResDto;
   }
 }

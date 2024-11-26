@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
-import { S3 } from 'aws-sdk';
+import { AWSError, S3 } from 'aws-sdk';
 import awsConfig from './aws.config';
 
 @Injectable()
@@ -18,29 +18,21 @@ export class AwsService {
   }
   private s3Client: S3;
 
-  async uploadFiles(
-    userId: string,
-    files: Express.Multer.File[]
-  ): Promise<string[]> {
-    if (!files) return;
-    return Promise.all(
-      files.map(async (file) => {
-        const ext = file.mimetype.split('/')[1]; // 파일 확장자
-        const originalName = file.originalname.split('.').slice(0, -1); // 파일 원본 이름
-        const fileName = `${userId}-${new Date().getTime()}-${originalName}`; // 파일 저장 이름
-        const request = this.s3Client.putObject({
-          Bucket: this.config.bucketName,
-          Key: `diary/${fileName}.${ext}`,
-          Body: file.buffer,
-          ContentType: `image/${ext}`,
-        });
-        request.send((err) => {
-          if (err) throw err;
-        });
-        return `https://${this.config.bucketName}.s3.${this.config.region}.amazonaws.com/diary/${fileName}.${ext}`;
-      })
-    ).then((urls) => {
-      return urls;
+  async uploadFile(userId: string, file: Express.Multer.File): Promise<string> {
+    if (!file) return;
+    const ext = file.mimetype.split('/')[1]; // 파일 확장자
+    const originalName = file.originalname.split('.').slice(0, -1); // 파일 원본 이름
+    const fileName = `${userId}-${new Date().getTime()}-${originalName}`; // 파일 저장 이름
+    const request = this.s3Client.putObject({
+      Bucket: this.config.bucketName,
+      Key: `diary/${fileName}.${ext}`,
+      Body: file.buffer,
+      ContentType: `image/${ext}`,
+    }); // 파일 이름을 client에서 받아와서 저장 가능한지 확인 후 수정 가능
+    request.send((err: AWSError) => {
+      if (err) throw err; // TODO - AWSError에 대한 처리 필요
     });
+
+    return `https://${this.config.bucketName}.s3.${this.config.region}.amazonaws.com/diary/${fileName}.${ext}`;
   }
 }
