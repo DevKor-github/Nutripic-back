@@ -91,4 +91,18 @@ export class DiaryService {
       date: updatedDiary.date,
     } as UpdateDiaryResDto;
   }
+
+  deleteDiary(diaryId: number): Promise<void> {
+    return this.diaryRepository.deleteDiary(diaryId);
+  }
+
+  async restoreDiary(diaryId: number): Promise<UpdateDiaryResDto> {
+    const diary = await this.diaryRepository.restoreDiary(diaryId);
+    return {
+      id: diary.id,
+      body: diary.body,
+      url: diary.url,
+      date: diary.date,
+    };
+  }
 }

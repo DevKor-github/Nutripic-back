@@ -25,6 +25,7 @@ export class DiaryRepository {
           gte: new Date(year, month, 1),
           lt: new Date(year, month + 1, 1), // 해당 년월에 생성된 다이어리
         },
+        isDeleted: false,
       },
     });
   }
@@ -56,6 +57,30 @@ export class DiaryRepository {
       data: {
         body: body,
         date: date,
+      },
+    });
+  }
+
+  async deleteDiary(diaryId: number): Promise<void> {
+    await this.prisma.diary.update({
+      where: {
+        id: diaryId,
+      },
+      data: {
+        isDeleted: true,
+        deletedAt: new Date(),
+      },
+    });
+  }
+
+  async restoreDiary(diaryId: number): Promise<Diary> {
+    return await this.prisma.diary.update({
+      where: {
+        id: diaryId,
+      },
+      data: {
+        isDeleted: false,
+        deletedAt: null,
       },
     });
   }

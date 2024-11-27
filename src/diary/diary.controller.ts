@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -83,5 +84,25 @@ export class DiaryController {
   getSignedUrl(@Param() fileName: string): Promise<string> {
     this.logger.log('Get Signed URL');
     return this.awsService.getPresignedUrl(fileName);
+  }
+
+  @Delete('/delete/:diaryId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteDiary(
+    @Param('diaryId', ParseIntPipe) diaryId: number
+  ): Promise<void> {
+    this.logger.log('Delete Diary');
+    await this.diaryService.getDiaryById(diaryId);
+    return this.diaryService.deleteDiary(diaryId);
+  }
+
+  @Patch('/restore/:diaryId')
+  @HttpCode(HttpStatus.OK)
+  async restoreDiary(
+    @Param('diaryId', ParseIntPipe) diaryId: number
+  ): Promise<UpdateDiaryResDto> {
+    this.logger.log('Restore Diary');
+    await this.diaryService.getDiaryById(diaryId);
+    return this.diaryService.restoreDiary(diaryId);
   }
 }
