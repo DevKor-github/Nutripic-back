@@ -1,6 +1,7 @@
 import {
   IsDate,
   IsDateString,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -14,12 +15,14 @@ import {
 
 export class GetAllDiaryResDto {
   @IsNumber()
+  @IsNotEmpty()
   id: number;
 
   @IsString()
-  @IsOptional()
+  @IsNotEmpty()
   url: string;
 
   @IsDate()
+  @IsNotEmpty()
   date: Date;
 }

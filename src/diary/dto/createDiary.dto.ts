@@ -8,12 +8,14 @@ import {
 
 export class CreateDiaryReqDto {
   @IsString()
+  @IsNotEmpty()
   body: string;
 
   @IsDateString()
   date: Date | string;
 
   @IsString()
+  @IsNotEmpty()
   url: string;
 }
 

@@ -9,6 +9,7 @@ import {
 
 export class UpdateDiaryReqDto {
   @IsString()
+  @IsNotEmpty()
   body: string;
 
   @IsDateString()
@@ -21,10 +22,12 @@ export class UpdateDiaryResDto {
   id: number;
 
   @IsString()
+  @IsNotEmpty()
   body: string;
 
   // 기존 등록 이미지입니다. 이미지 수정은 없습니다.
   @IsString()
+  @IsNotEmpty()
   url: string;
 
   @IsDate()

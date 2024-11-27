@@ -13,6 +13,7 @@ export class GetDiaryResDto {
   id: number;
 
   @IsString()
+  @IsNotEmpty()
   body: string;
 
   @IsString()
