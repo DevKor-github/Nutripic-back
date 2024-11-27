@@ -28,9 +28,9 @@ export class AwsService {
       Key: `diary/${fileName}.${ext}`,
       Body: file.buffer,
       ContentType: `image/${ext}`,
-    }); // 파일 이름을 client에서 받아와서 저장 가능한지 확인 후 수정 가능
+    });
     request.send((err: AWSError) => {
-      if (err) throw err; // TODO - AWSError에 대한 처리 필요
+      if (err) throw err;
     });
 
     return `https://${this.config.bucketName}.s3.${this.config.region}.amazonaws.com/diary/${fileName}.${ext}`;

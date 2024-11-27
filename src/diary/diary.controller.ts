@@ -11,16 +11,15 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { DiaryService } from './diary.service';
-import { Public } from 'src/auth/auth.guard';
 import { User } from 'src/utils/decorator/user.decorator';
-import { CreateDiaryReqDto } from './dto/createDiary.dto';
-import { UpdateDiaryReqDto, UpdateDiaryResDto } from './dto/updateDiary.dto';
+import { DiaryService } from './diary.service';
+import { AwsService } from '../aws/aws.service';
 import { GetAllDiaryResDto } from './dto/getAllDiary.dto';
 import { GetDiaryResDto } from './dto/getDiary.dto';
-import { AwsService } from '../aws/aws.service';
+import { CreateDiaryReqDto } from './dto/createDiary.dto';
+import { UpdateDiaryReqDto, UpdateDiaryResDto } from './dto/updateDiary.dto';
 
-@Public()
+// @Public()
 @Controller('diary')
 export class DiaryController {
   constructor(

@@ -5,10 +5,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { DiaryRepository } from './diary.repository';
-import { UpdateDiaryReqDto, UpdateDiaryResDto } from './dto/updateDiary.dto';
-import { GetDiaryResDto } from './dto/getDiary.dto';
 import { GetAllDiaryResDto } from './dto/getAllDiary.dto';
+import { GetDiaryResDto } from './dto/getDiary.dto';
 import { CreateDiaryReqDto } from './dto/createDiary.dto';
+import { UpdateDiaryReqDto, UpdateDiaryResDto } from './dto/updateDiary.dto';
 
 @Injectable()
 export class DiaryService {
@@ -20,8 +20,6 @@ export class DiaryService {
     index: number
   ): Promise<GetAllDiaryResDto[]> {
     const today = new Date();
-    // 만일 전송속도로 인해 월이 넘어가는 때에 클라이언트의 요청을 받게되어 다음달(잘못된)) 데이터를 반환하게 된다면..?
-    // 그것을 대비해 차라리 클라이언트에서 요청을 보낸 시각을 기준으로 데이터를 반환하는 것이 더 안전하겠죠?
     const targetDate = new Date(today.setMonth(today.getMonth() - index));
     const targetMonth = targetDate.getMonth();
     const targetYear = targetDate.getFullYear();

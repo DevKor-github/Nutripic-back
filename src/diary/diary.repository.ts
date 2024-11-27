@@ -30,9 +30,6 @@ export class DiaryRepository {
     });
   }
 
-  /**
-   * TODO: pre-signed-url을 db에 저장하는 로직 추가
-   */
   createDiary(
     userId: string,
     body: string,
