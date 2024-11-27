@@ -35,4 +35,13 @@ export class AwsService {
 
     return `https://${this.config.bucketName}.s3.${this.config.region}.amazonaws.com/diary/${fileName}.${ext}`;
   }
+
+  async getPresignedUrl(fileName: string): Promise<string> {
+    const url = this.s3Client.getSignedUrl('putObject', {
+      Bucket: this.config.bucketName,
+      Key: `diary/${fileName}`,
+      Expires: 45,
+    });
+    return url;
+  }
 }

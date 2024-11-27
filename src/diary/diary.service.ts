@@ -52,10 +52,9 @@ export class DiaryService {
 
   async createDiary(
     userId: string,
-    createDiaryReqDto: CreateDiaryReqDto,
-    url: string
+    createDiaryReqDto: CreateDiaryReqDto
   ): Promise<void> {
-    const { body, date } = createDiaryReqDto;
+    const { body, date, url } = createDiaryReqDto;
     const diary = await this.diaryRepository.createDiary(
       userId,
       body,

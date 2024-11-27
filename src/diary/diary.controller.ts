@@ -9,8 +9,6 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  UploadedFile,
-  UseInterceptors,
 } from '@nestjs/common';
 import { DiaryService } from './diary.service';
 import { Public } from 'src/auth/auth.guard';
@@ -20,8 +18,6 @@ import { UpdateDiaryReqDto, UpdateDiaryResDto } from './dto/updateDiary.dto';
 import { GetAllDiaryResDto } from './dto/getAllDiary.dto';
 import { GetDiaryResDto } from './dto/getDiary.dto';
 import { AwsService } from '../aws/aws.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { IsNumber, isNumber } from 'class-validator';
 
 @Public()
 @Controller('diary')
@@ -61,26 +57,15 @@ export class DiaryController {
     return this.diaryService.getDiaryById(diaryId);
   }
 
-  /**
-   * TODO: pre-signed-url을 활용한 이미지 업로드 로직 추가
-   *
-   * 의논할 점
-   * 1. 하루에 등록할 수 있는 다이어리의 개수를 제한할 필요가 있을까요?
-   * 2. 한번에 등록할 수 있는 이미지는 몇개까지로 생각하시나요?
-   */
   @Post('/add')
-  @UseInterceptors(FileInterceptor('file'))
   @HttpCode(HttpStatus.CREATED)
   async createDiary(
     @User() uid: string,
-    @Body() data: string, // 파일과 동시에 업로드하는 multipart/form-data 형식의 데이터를 받기 위해 data: {"body": ...} 형식의 string으로 받음
-    @UploadedFile() file: Express.Multer.File
+    @Body() createDiaryReqDto: CreateDiaryReqDto
   ): Promise<void> {
     this.logger.log('Create Diary');
-    const createDiaryReqDto: CreateDiaryReqDto = JSON.parse(data['data']);
 
-    const url = await this.awsService.uploadFile(uid, file);
-    return this.diaryService.createDiary(uid, createDiaryReqDto, url);
+    return this.diaryService.createDiary(uid, createDiaryReqDto);
   }
 
   @Patch('/update/:diaryId')
@@ -91,5 +76,12 @@ export class DiaryController {
   ): Promise<UpdateDiaryResDto> {
     this.logger.log('Update Diary');
     return this.diaryService.updateDiary(diaryId, updateDiaryReqDto);
+  }
+
+  @Get('/get-signed-url/:fileName')
+  @HttpCode(HttpStatus.OK)
+  getSignedUrl(@Param() fileName: string): Promise<string> {
+    this.logger.log('Get Signed URL');
+    return this.awsService.getPresignedUrl(fileName);
   }
 }

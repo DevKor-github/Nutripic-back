@@ -12,6 +12,9 @@ export class CreateDiaryReqDto {
 
   @IsDateString()
   date: Date | string;
+
+  @IsString()
+  url: string;
 }
 
 // 별도의 DTO 없이 status code에 따라 클라이언트에서 처리하도록 합의.
