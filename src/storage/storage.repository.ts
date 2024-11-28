@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Food, StorageType } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { FoodDto } from './dto/food.dto';
 import { UpdateFoodDto } from './dto/updateFood.dto';
+import { CreateFoodDto } from './dto/createFood.dto';
 
 @Injectable()
 export class StorageRepository {
@@ -18,9 +18,10 @@ export class StorageRepository {
     });
   }
 
-  async createFoods(foods: FoodDto[]): Promise<Food[]> {
+  async createFoods(userId: string, foods: CreateFoodDto[]): Promise<Food[]> {
+    const createFoodData = foods.map((food) => ({ ...food, userId }));
     return this.prisma.food.createManyAndReturn({
-      data: foods,
+      data: createFoodData,
     });
   }
 
