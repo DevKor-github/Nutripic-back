@@ -1,8 +1,10 @@
 import {
   BadGatewayException,
+  ForbiddenException,
   Injectable,
   Logger,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { DiaryRepository } from './diary.repository';
 import { GetAllDiaryResDto } from './dto/getAllDiary.dto';
@@ -36,10 +38,17 @@ export class DiaryService {
     }));
   }
 
-  async getDiaryById(diaryId: number): Promise<GetDiaryResDto> {
+  async getDiaryById(
+    diaryId: number,
+    userId?: string
+  ): Promise<GetDiaryResDto> {
     const diary = await this.diaryRepository.getDiaryById(diaryId);
     if (!diary)
       throw new NotFoundException('해당 ID의 다이어리가 존재하지 않습니다.');
+    if (userId && diary.userId !== userId)
+      throw new ForbiddenException(
+        '해당 다이어리에 대한 접근 권한이 없습니다.'
+      );
     return {
       id: diary.id,
       body: diary.body,
@@ -90,12 +99,16 @@ export class DiaryService {
     } as UpdateDiaryResDto;
   }
 
-  deleteDiary(diaryId: number): Promise<void> {
-    return this.diaryRepository.deleteDiary(diaryId);
+  async deleteDiary(diaryId: number): Promise<void> {
+    const diary = await this.diaryRepository.deleteDiary(diaryId);
+    if (!diary || diary.isDeleted === false)
+      throw new BadGatewayException('다이어리 삭제에 실패했습니다.');
   }
 
   async restoreDiary(diaryId: number): Promise<UpdateDiaryResDto> {
     const diary = await this.diaryRepository.restoreDiary(diaryId);
+    if (!diary || diary.isDeleted === true)
+      throw new BadGatewayException('다이어리 복구에 실패했습니다.');
     return {
       id: diary.id,
       body: diary.body,

@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { User } from 'src/utils/decorator/user.decorator';
 import { DiaryService } from './diary.service';
@@ -24,6 +25,8 @@ import {
   ApiConsumes,
   ApiCreatedResponse,
   ApiExtraModels,
+  ApiForbiddenResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -33,7 +36,7 @@ import {
 import { Public } from 'src/auth/auth.guard';
 import { $Enums } from '@prisma/client';
 
-@Public()
+// @Public()
 @ApiTags('Diary')
 @Controller('diary')
 export class DiaryController {
@@ -172,6 +175,9 @@ export class DiaryController {
     description: '이미지 업로드 presigned URL 생성 성공',
     type: String,
   })
+  @ApiBadGatewayResponse({
+    description: 'URL 생성 실패',
+  })
   @Get('/get-signed-url/:fileName')
   @HttpCode(HttpStatus.OK)
   getSignedUrl(@Param() fileName: string): Promise<string> {
@@ -186,19 +192,26 @@ export class DiaryController {
     description: '특정 다이어리의 ID',
     example: 7,
   })
-  @ApiOkResponse({
+  @ApiNoContentResponse({
     description: '다이어리 삭제 성공',
+  })
+  @ApiForbiddenResponse({
+    description: '해당 다이어리에 대한 접근 권한이 없습니다.',
   })
   @ApiNotFoundResponse({
     description: '해당 ID의 다이어리가 존재하지 않습니다.',
   })
+  @ApiBadGatewayResponse({
+    description: '다이어리 삭제 실패',
+  })
   @Delete('/delete/:diaryId')
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteDiary(
+    @User() uid: string,
     @Param('diaryId', ParseIntPipe) diaryId: number
   ): Promise<void> {
     this.logger.log('Delete Diary');
-    await this.diaryService.getDiaryById(diaryId);
+    await this.diaryService.getDiaryById(diaryId, uid);
     return this.diaryService.deleteDiary(diaryId);
   }
 
@@ -213,16 +226,23 @@ export class DiaryController {
     description: '다이어리 복원 성공',
     type: UpdateDiaryResDto,
   })
+  @ApiForbiddenResponse({
+    description: '해당 다이어리에 대한 접근 권한이 없습니다.',
+  })
   @ApiNotFoundResponse({
     description: '해당 ID의 다이어리가 존재하지 않습니다.',
+  })
+  @ApiBadGatewayResponse({
+    description: '다이어리 복원 실패',
   })
   @Patch('/restore/:diaryId')
   @HttpCode(HttpStatus.OK)
   async restoreDiary(
+    @User() uid: string,
     @Param('diaryId', ParseIntPipe) diaryId: number
   ): Promise<UpdateDiaryResDto> {
     this.logger.log('Restore Diary');
-    await this.diaryService.getDiaryById(diaryId);
+    await this.diaryService.getDiaryById(diaryId, uid);
     return this.diaryService.restoreDiary(diaryId);
   }
 }

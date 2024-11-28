@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadGatewayException, Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { AWSError, S3 } from 'aws-sdk';
 import awsConfig from './aws.config';
@@ -42,6 +42,7 @@ export class AwsService {
       Key: `diary/${fileName}`,
       Expires: 45,
     });
+    if (!url) throw new BadGatewayException('URL 생성에 실패했습니다.');
     return url;
   }
 }

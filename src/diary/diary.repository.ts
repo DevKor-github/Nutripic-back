@@ -58,8 +58,8 @@ export class DiaryRepository {
     });
   }
 
-  async deleteDiary(diaryId: number): Promise<void> {
-    await this.prisma.diary.update({
+  async deleteDiary(diaryId: number): Promise<Diary> {
+    return await this.prisma.diary.update({
       where: {
         id: diaryId,
       },
