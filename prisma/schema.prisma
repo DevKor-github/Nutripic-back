@@ -14,34 +14,88 @@ datasource db {
 }
 
 model User {
-  uid     String    @id @unique @db.VarChar(128)
-  Storage Storage[]
+  uid             String            @id @unique @db.VarChar(128)
+  storage         Storage[]
+  recipeBookmark RecipeBookmark[]
+
+  @@map("user")
 }
 
 model Storage {
-  user       User         @relation(fields: [userId], references: [uid])
-  userId     String
-  type       StorageType
-  Food Food[]
+  user   User         @relation(fields: [userId], references: [uid])
+  userId String       @map("user_id")
+  type   StorageType
+  food   Food[]
 
   @@id([userId, type])
+  @@map("storage")
 }
 
 model Food {
-  id          Int         @id @default(autoincrement())
-  storedIn    Storage     @relation(fields: [userId, storageType], references: [userId, type])
-  userId      String
-  storageType StorageType
-  name        String      @db.VarChar(255)
-  amount      Int         @default(1)
-  category    String
-  addedDate   DateTime    @default(now())
-  expireDate  DateTime?
-  expired     Boolean     @default(false)
+  id           Int          @id @default(autoincrement())
+  storedIn     Storage      @relation(fields: [userId, storageType], references: [userId, type]) 
+  userId       String       @map("user_id")
+  storageType  StorageType  @map("storage_type")
+  name         String       @db.VarChar(255)
+  class1       String       @db.VarChar(255) //대분류
+  class2       String       @db.VarChar(255) @default("기타") //중분류
+  addedDate    DateTime     @default(now()) @map("added_date")
+  expireDate   DateTime?                    @map("expire_date")
+  expired      Boolean      @default(false)
+
+  @@map("food")
 }
 
 enum StorageType {
   fridge
   freezer
   room
+
+  @@map("storage_type")
+}
+
+model Recipe {
+  id           Int    @id @default(autoincrement())
+  name         String @db.VarChar(255)
+  procedure    String
+  difficulty   Int //? enum으로 난이도 구분하기?
+  cookingTime  Int  @map("cooking_time")//분 단위
+
+  ingredient IngredientRecipeIndex[]
+  recipeBookmark  RecipeBookmark[]
+
+  @@map("recipe")
+}
+
+model Ingredient {
+  name     String @id @db.VarChar(255)
+
+  recipes  IngredientRecipeIndex[]
+
+  @@map("ingredient")
+}
+
+model IngredientRecipeIndex {
+  recipeId Int @map("recipe_id")
+  recipe Recipe @relation(fields: [recipeId], references: [id])
+
+  ingredientName String @map("ingredient_name")
+  ingredient Ingredient @relation(fields:[ingredientName], references: [name])
+
+  amount String @db.VarChar(255)
+
+  ingredientCount Int @map("ingredient_count")
+
+  @@id([ingredientName, recipeId])
+  @@map("ingredient_recipe_index")
+}
+
+model RecipeBookmark {
+  user     User   @relation(fields: [userId], references: [uid])
+  userId   String @map("user_id")
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  recipeId Int    @map("recipe_id")
+
+  @@id([userId, recipeId])
+  @@map("recipe_bookmark")
 }

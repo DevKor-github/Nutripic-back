@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Food, Storage, StorageType } from '@prisma/client';
+import { Food, StorageType } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { FoodDto } from './dto/food.dto';
 import { UpdateFoodDto } from './dto/updateFood.dto';
@@ -36,24 +36,11 @@ export class StorageRepository {
     });
   }
 
-  async updateFoodAmount(id: number, newAmount: number): Promise<Food> {
-    return this.prisma.food.update({
-      where: { id },
-      data: { amount: newAmount },
-    });
-  }
-
   async updateFoodInfo(foodInfo: UpdateFoodDto): Promise<Food> {
     return this.prisma.food.update({
       where: { id: foodInfo.id },
       data: {
-        storageType: foodInfo.storageType,
-        name: foodInfo.name,
-        amount: foodInfo.amount,
-        category: foodInfo.category,
-        addedDate: foodInfo.addedDate,
-        expireDate: foodInfo.expireDate,
-        expired: foodInfo.expired,
+        ...foodInfo,
       },
     });
   }

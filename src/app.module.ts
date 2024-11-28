@@ -10,6 +10,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { FirebaseAuthGuard } from './auth/auth.guard';
 import { StorageModule } from './storage/storage.module';
+import { RecipeModule } from './recipe/recipe.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { StorageModule } from './storage/storage.module';
     UserModule,
     PrismaModule,
     StorageModule,
+    RecipeModule,
   ],
   controllers: [AppController],
   providers: [
