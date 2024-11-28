@@ -4,7 +4,6 @@ import {
   Injectable,
   Logger,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { DiaryRepository } from './diary.repository';
 import { GetAllDiaryResDto } from './dto/getAllDiary.dto';
@@ -89,7 +88,7 @@ export class DiaryService {
     );
 
     if (!updatedDiary)
-      throw new BadGatewayException('다이어리 업데이트에 실패했습니다.');
+      throw new BadGatewayException('다이어리 수정에 실패했습니다.');
 
     return {
       id: updatedDiary.id,

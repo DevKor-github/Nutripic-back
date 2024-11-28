@@ -10,7 +10,6 @@ import {
   ParseIntPipe,
   Patch,
   Post,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { User } from 'src/utils/decorator/user.decorator';
 import { DiaryService } from './diary.service';
@@ -24,7 +23,6 @@ import {
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
-  ApiExtraModels,
   ApiForbiddenResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -33,10 +31,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { Public } from 'src/auth/auth.guard';
-import { $Enums } from '@prisma/client';
 
-// @Public()
 @ApiTags('Diary')
 @Controller('diary')
 export class DiaryController {
@@ -89,6 +84,11 @@ export class DiaryController {
   })
   @ApiNotFoundResponse({
     description: '해당 ID의 다이어리가 존재하지 않습니다.',
+    example: {
+      statusCode: 404,
+      message: '해당 ID의 다이어리가 존재하지 않습니다',
+      error: 'Not Found',
+    },
   })
   @Get('/:diaryId')
   @HttpCode(HttpStatus.OK)
@@ -110,6 +110,11 @@ export class DiaryController {
   })
   @ApiBadGatewayResponse({
     description: '다이어리 생성 실패',
+    example: {
+      statusCode: 502,
+      message: '다이어리 생성에 실패했습니다.',
+      error: 'Bad Gateway',
+    },
   })
   @Post('/add')
   @HttpCode(HttpStatus.CREATED)
@@ -130,19 +135,7 @@ export class DiaryController {
     example: 7,
   })
   @ApiBody({
-    schema: {
-      properties: {
-        body: {
-          type: 'string',
-          example: '본문 예시입니다.',
-        },
-        date: {
-          type: 'Date || String',
-          example: '2024-11-12T19:30:00.000Z',
-        },
-      },
-      type: $Enums['UpdateDiaryReqDto'],
-    },
+    type: UpdateDiaryReqDto,
   })
   @ApiOkResponse({
     description: '다이어리 수정 성공',
@@ -150,9 +143,19 @@ export class DiaryController {
   })
   @ApiNotFoundResponse({
     description: '해당 ID의 다이어리가 존재하지 않습니다.',
+    example: {
+      statusCode: 404,
+      message: '해당 ID의 다이어리가 존재하지 않습니다.',
+      error: 'Not Found',
+    },
   })
   @ApiBadGatewayResponse({
     description: '다이어리 수정 실패',
+    example: {
+      statusCode: 502,
+      message: '다이어리 수정에 실패했습니다.',
+      error: 'Bad Gateway',
+    },
   })
   @Patch('/update/:diaryId')
   @HttpCode(HttpStatus.OK)
@@ -172,11 +175,16 @@ export class DiaryController {
     example: 'example_image.jpg',
   })
   @ApiOkResponse({
-    description: '이미지 업로드 presigned URL 생성 성공',
+    description: 'URL 생성 성공',
     type: String,
   })
   @ApiBadGatewayResponse({
     description: 'URL 생성 실패',
+    example: {
+      statusCode: 502,
+      message: 'URL 생성에 실패했습니다.',
+      error: 'Bad Gateway',
+    },
   })
   @Get('/get-signed-url/:fileName')
   @HttpCode(HttpStatus.OK)
@@ -194,15 +202,33 @@ export class DiaryController {
   })
   @ApiNoContentResponse({
     description: '다이어리 삭제 성공',
+    example: {
+      statusCode: 204,
+    },
   })
   @ApiForbiddenResponse({
-    description: '해당 다이어리에 대한 접근 권한이 없습니다.',
+    description: '다이어리 접근 권한 없음',
+    example: {
+      statusCode: 403,
+      message: '해당 다이어리에 대한 접근 권한이 없습니다.',
+      error: 'Forbidden',
+    },
   })
   @ApiNotFoundResponse({
     description: '해당 ID의 다이어리가 존재하지 않습니다.',
+    example: {
+      statusCode: 404,
+      message: '해당 ID의 다이어리가 존재하지 않습니다.',
+      error: 'Not Found',
+    },
   })
   @ApiBadGatewayResponse({
     description: '다이어리 삭제 실패',
+    example: {
+      statusCode: 502,
+      message: '다이어리 삭제에 실패했습니다.',
+      error: 'Bad Gateway',
+    },
   })
   @Delete('/delete/:diaryId')
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -215,7 +241,7 @@ export class DiaryController {
     return this.diaryService.deleteDiary(diaryId);
   }
 
-  @ApiOperation({ summary: '다이어리 복원' })
+  @ApiOperation({ summary: '다이어리 복구' })
   @ApiParam({
     name: 'diaryId',
     required: true,
@@ -223,17 +249,32 @@ export class DiaryController {
     example: 7,
   })
   @ApiOkResponse({
-    description: '다이어리 복원 성공',
+    description: '다이어리 복구 성공',
     type: UpdateDiaryResDto,
   })
   @ApiForbiddenResponse({
     description: '해당 다이어리에 대한 접근 권한이 없습니다.',
+    example: {
+      statusCode: 403,
+      message: '해당 다이어리에 대한 접근 권한이 없습니다.',
+      error: 'Forbidden',
+    },
   })
   @ApiNotFoundResponse({
     description: '해당 ID의 다이어리가 존재하지 않습니다.',
+    example: {
+      statusCode: 404,
+      message: '해당 ID의 다이어리가 존재하지 않습니다.',
+      error: 'Not Found',
+    },
   })
   @ApiBadGatewayResponse({
-    description: '다이어리 복원 실패',
+    description: '다이어리 복구 실패',
+    example: {
+      statusCode: 502,
+      message: '다이어리 복구에 실패했습니다.',
+      error: 'Bad Gateway',
+    },
   })
   @Patch('/restore/:diaryId')
   @HttpCode(HttpStatus.OK)
