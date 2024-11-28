@@ -9,11 +9,6 @@ import {
 } from 'class-validator';
 
 export class CreateFoodDto {
-  @ApiProperty({ description: '식재료 id - 자동 생성 (입력 필요 없음)' })
-  @IsString()
-  @IsOptional()
-  id?: number;
-
   @ApiProperty({ description: 'fridge/freezer/room' })
   @IsString()
   @IsNotEmpty()
