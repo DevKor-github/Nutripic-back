@@ -12,12 +12,7 @@ export class StorageService {
   async createFoods(userId: string, Foods: CreateFoodDto[]): Promise<Food[]> {
     //TODO: 식재료 유통기한 정보 추가
 
-    const FoodsToAdd = Foods.map((food) => ({
-      userId,
-      ...food,
-    }));
-
-    return this.storageRepository.createFoods(FoodsToAdd);
+    return this.storageRepository.createFoods(userId, Foods);
   }
 
   //내 식재료 가져오기
