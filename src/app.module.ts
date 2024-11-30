@@ -12,6 +12,7 @@ import { FirebaseAuthGuard } from './auth/auth.guard';
 import { StorageModule } from './storage/storage.module';
 import { DiaryModule } from './diary/diary.module';
 import { AwsModule } from './aws/aws.module';
+import { RecipeModule } from './recipe/recipe.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AwsModule } from './aws/aws.module';
     StorageModule,
     DiaryModule,
     AwsModule,
+    RecipeModule,
   ],
   controllers: [AppController],
   providers: [

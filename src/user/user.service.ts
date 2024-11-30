@@ -1,20 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma, User } from '@prisma/client';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   //유저 생성
-  async createUser(data: Prisma.UserCreateInput): Promise<User> {
-    return this.prisma.user.create({
-      data,
-    });
+  async createUser(uid: string): Promise<string> {
+    if (await this.userRepository.checkUserExists(uid))
+      throw new BadRequestException('이미 존재하는 uid 입니다.');
+
+    return this.userRepository.createUser(uid);
   }
 
   //유저 삭제
-  async deleteUser(): Promise<boolean> {
-    return true;
+  async deleteUser(uid: string): Promise<string> {
+    if (await !this.userRepository.checkUserExists(uid))
+      throw new BadRequestException('존재하지 않는 uid 입니다.');
+
+    return this.userRepository.deleteUser(uid);
   }
 }
