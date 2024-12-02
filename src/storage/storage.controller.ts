@@ -47,7 +47,7 @@ export class StorageController {
   }
 
   //식재료 삭제하기
-  @ApiBody({ type: DeleteFoodDto, description: '삭제할 식재료 ID, 삭제 수량' })
+  @ApiBody({ type: DeleteFoodDto, description: '삭제할 식재료 ID' })
   @UseGuards(FirebaseAuthGuard)
   @Delete('/delete')
   @HttpCode(HttpStatus.OK)
@@ -59,7 +59,10 @@ export class StorageController {
   }
 
   //식재료 정보 수정
-  @ApiBody({ type: UpdateFoodDto, description: '수정할 식재료 ID, 수정 정보' })
+  @ApiBody({
+    type: UpdateFoodDto,
+    description: '수정할 식재료 ID, 수정 정보 (id 제외 모두 optional field)',
+  })
   @UseGuards(FirebaseAuthGuard)
   @Put('/update')
   @HttpCode(HttpStatus.OK)
