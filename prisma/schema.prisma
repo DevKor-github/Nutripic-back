@@ -39,7 +39,7 @@ model Food {
   name         String       @db.VarChar(255)
   class1       String       @db.VarChar(255) //대분류
   class2       String       @db.VarChar(255) @default("기타") //중분류
-  icon         String       @db.VarChar() 
+  icon         String       @db.VarChar(255) @default("null")
   addedDate    DateTime     @default(now()) @map("added_date")
   expireDate   DateTime?                    @map("expire_date")
   expired      Boolean      @default(false)

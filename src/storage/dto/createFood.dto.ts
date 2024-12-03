@@ -29,6 +29,11 @@ export class CreateFoodDto {
   @IsOptional()
   class2?: string;
 
+  @ApiProperty({ description: '표시 아이콘 URL' })
+  @IsString()
+  @IsOptional()
+  icon?: string;
+
   @ApiProperty({ description: '추가 날짜' })
   @IsDateString()
   @IsOptional() //기본값: 추가한 일시

@@ -35,6 +35,11 @@ export class UpdateFoodDto {
   @IsOptional()
   class2?: string;
 
+  @ApiProperty({ description: '표시 아이콘 URL' })
+  @IsString()
+  @IsOptional()
+  icon?: string;
+
   @ApiProperty({ description: '추가 날짜' })
   @IsDateString()
   @IsOptional()
