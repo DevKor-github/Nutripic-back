@@ -23,7 +23,7 @@ export class RecipeService {
    */
   async getRecommandedRecipe(uid: string): Promise<number[][]> {
     const userFoodList = await this.recipeRepository.getUserFoodList(uid);
-
+    if (userFoodList.length === 0) return [[], []]; //식재료 없음
     const moreIngredients = 2;
 
     const recommendedRecipes =
