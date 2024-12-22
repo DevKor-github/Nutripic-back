@@ -83,6 +83,7 @@ export class RecipeRepository {
         name: true,
         difficulty: true,
         cookingTime: true,
+        imageUrl: true,
       },
     });
   }
@@ -97,6 +98,7 @@ export class RecipeRepository {
         name: true,
         difficulty: true,
         cookingTime: true,
+        imageUrl: true,
       },
     });
   }
@@ -132,6 +134,7 @@ export class RecipeRepository {
             name: true,
             difficulty: true,
             cookingTime: true,
+            imageUrl: true,
           },
         },
       },

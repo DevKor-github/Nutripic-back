@@ -20,4 +20,8 @@ export class RecipePreviewDto {
   @IsNumber()
   @IsOptional()
   missingIngredients?: number;
+
+  @IsString()
+  @IsOptional()
+  imageUrl?: string;
 }
