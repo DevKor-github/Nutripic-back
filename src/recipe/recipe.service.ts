@@ -11,7 +11,7 @@ export class RecipeService {
 
   /** 추천 레시피 리스트
    *
-   * @param uid
+   * @param userid
    * @returns number[][] (recipeId, missingIngredients)
    *
    * 유저가 가진 식재료로 만들 수 있는 레시피 리스트와
@@ -21,8 +21,8 @@ export class RecipeService {
    * 추가 필요한 식재료 수는 검색 결과에 따라 유연하게 결정
    * ? (세부사항 결정 필요, 최대 n개 식재료 추가?)
    */
-  async getRecommandedRecipe(uid: string): Promise<number[][]> {
-    const userFoodList = await this.recipeRepository.getUserFoodList(uid);
+  async getRecommandedRecipe(userId: string): Promise<number[][]> {
+    const userFoodList = await this.recipeRepository.getUserFoodList(userId);
     if (userFoodList.length === 0) return [[], []]; //식재료 없음
     const moreIngredients = 2;
 
@@ -57,6 +57,7 @@ export class RecipeService {
    * 해당 레시피들의 프리뷰를 보냄 (id, 이름, 난이도, 조리시간)
    */
   async getRecipePreviews(recipeIds: number[]): Promise<RecipePreviewDto[]> {
+    if (recipeIds.length === 0) return [];
     const previews = await this.recipeRepository.getRecipePreviews(recipeIds);
     const processed = await this.processProcedure(previews);
 
@@ -80,7 +81,6 @@ export class RecipeService {
 
   /** 필터링 된 레시피 리스트
    *
-   * @param uid
    * @param recipeFilter
    * @returns recipePreview []
    *
