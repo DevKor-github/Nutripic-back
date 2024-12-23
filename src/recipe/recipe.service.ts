@@ -58,17 +58,24 @@ export class RecipeService {
    */
   async getRecipePreviews(recipeIds: number[]): Promise<RecipePreviewDto[]> {
     const previews = await this.recipeRepository.getRecipePreviews(recipeIds);
+    const processed = await this.processProcedure(previews);
+
+    return recipeIds.map((id) =>
+      processed.find((preview) => preview.id === id)
+    );
+  }
+
+  // 상세 레시피 리스트로 변환
+  async processProcedure(
+    previews: RecipePreviewDto[]
+  ): Promise<RecipePreviewDto[]> {
     const splitSteps = /[0-9]+\.\s/g;
-    const processed = previews.map((preview) => {
+    return previews.map((preview) => {
       if (typeof preview.procedure === 'string') {
         preview.procedure = preview.procedure.split(splitSteps).slice(1);
       } else throw new Error('Invalid procedure type');
       return preview;
     });
-
-    return recipeIds.map((id) =>
-      processed.find((preview) => preview.id === id)
-    );
   }
 
   /** 필터링 된 레시피 리스트
@@ -84,7 +91,9 @@ export class RecipeService {
   async getFilteredRecipe(
     recipeFilter: RecipeFilterDto
   ): Promise<RecipePreviewDto[]> {
-    return this.recipeRepository.getFilteredRecipes(recipeFilter);
+    const previews =
+      await this.recipeRepository.getFilteredRecipes(recipeFilter);
+    return this.processProcedure(previews);
   }
 
   /** 레시피 상세정보
@@ -95,7 +104,12 @@ export class RecipeService {
    * 상세 레시피 정보 반환 (id, 이름, 재료, 상세 설명 등)
    */
   async viewRecipeDetails(recipeId: number): Promise<RecipeDto> {
-    return this.recipeRepository.getRecipeDetails(recipeId);
+    const recipeInfo = await this.recipeRepository.getRecipeDetails(recipeId);
+    const splitSteps = /[0-9]+\.\s/g;
+    if (typeof recipeInfo.procedure === 'string')
+      recipeInfo.procedure = recipeInfo.procedure.split(splitSteps).slice(1);
+    else throw new Error('Invalid procedure type');
+    return recipeInfo;
   }
 
   //북마크 관련 기능
@@ -104,7 +118,8 @@ export class RecipeService {
   }
 
   async viewMyBookmark(userId: string): Promise<RecipePreviewDto[]> {
-    return this.recipeRepository.getBookmark(userId);
+    const previews = await this.recipeRepository.getBookmark(userId);
+    return this.processProcedure(previews);
   }
 
   async deleteBookmark(userId: string, recipeId: number): Promise<number> {

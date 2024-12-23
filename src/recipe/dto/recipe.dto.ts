@@ -16,7 +16,7 @@ export class RecipeDto {
 
   @IsString()
   @IsOptional() //레시피 선택 시 상세 레시피 리턴
-  procedure: string;
+  procedure: string | string[];
 
   @IsNumber()
   @IsNotEmpty()
