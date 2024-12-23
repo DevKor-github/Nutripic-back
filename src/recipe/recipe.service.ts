@@ -58,7 +58,17 @@ export class RecipeService {
    */
   async getRecipePreviews(recipeIds: number[]): Promise<RecipePreviewDto[]> {
     const previews = await this.recipeRepository.getRecipePreviews(recipeIds);
-    return recipeIds.map((id) => previews.find((preview) => preview.id === id));
+    const splitSteps = /[0-9]+\.\s/g;
+    const processed = previews.map((preview) => {
+      if (typeof preview.procedure === 'string') {
+        preview.procedure = preview.procedure.split(splitSteps).slice(1);
+      } else throw new Error('Invalid procedure type');
+      return preview;
+    });
+
+    return recipeIds.map((id) =>
+      processed.find((preview) => preview.id === id)
+    );
   }
 
   /** 필터링 된 레시피 리스트
