@@ -39,9 +39,14 @@ export class StorageService {
   }
 
   //식재료 삭제
-  async deleteFood(userId: string, foodId: number): Promise<Food> {
-    const foodToDelete = await this.checkIsFoodOwner(userId, foodId);
-    return this.storageRepository.deleteByFoodId(foodToDelete.id);
+  //!TODO: number만 넘기도록 수정
+  async deleteFood(userId: string, foodIds: number[]): Promise<Food[]> {
+    return Promise.all(
+      foodIds.map(async (foodId) => {
+        const foodToDelete = await this.checkIsFoodOwner(userId, foodId);
+        return this.storageRepository.deleteByFoodId(foodToDelete.id);
+      })
+    );
   }
 
   //식재료 정보 수정
