@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { ingredientDto } from './ingredient.dto';
 
 export class RecipePreviewDto {
   @IsNumber()
@@ -24,4 +25,12 @@ export class RecipePreviewDto {
   @IsString()
   @IsOptional()
   imageUrl?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  ingredient: ingredientDto[];
+
+  @IsString()
+  @IsNotEmpty()
+  procedure: string | string[];
 }
