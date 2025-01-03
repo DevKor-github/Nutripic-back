@@ -8,8 +8,8 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
-    "start:dev": "cross-env NODE_OPTIONS=--max-old-space-size=1024 NODE_ENV=development nest start --watch",
+    "start": "cross-env NODE_OPTIONS=--max-old-space-size=384 NODE_ENV=development nest start",
+    "start:dev": "cross-env NODE_OPTIONS=--max-old-space-size=512 --gc-interval=100 NODE_ENV=development nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "cross-env NODE_ENV=production node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -20,8 +20,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:dev": "dotenv -e .env.development -- npx prisma",
     "prisma:prod": "dotenv -e .env.production -- npx prisma",
-    "pm2:start:dev": "cross-env NODE_OPTIONS=--max-old-space-size=1024 NODE_ENV=development pm2 start ecosystem.config.js --watch",
-    "pm2:start:prod": "cross-env NODE_OPTIONS=--max-old-space-size=1024 NODE_ENV=production pm2 start ecosystem.config.js"
+    "pm2:start:dev": "npm install && nest build && cross-env NODE_OPTIONS=--max-old-space-size=512 NODE_ENV=development pm2 start ecosystem.config.js --watch",
+    "pm2:start:prod": "npm install && nest build && cross-env NODE_OPTIONS=--max-old-space-size=512 NODE_ENV=production pm2 start ecosystem.config.js"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

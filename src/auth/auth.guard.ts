@@ -53,7 +53,7 @@ export class FirebaseAuthGuard implements CanActivate {
     } catch (err) {
       this.logger.error('Invalid or expired token', err.stack);
       throw new UnauthorizedException('유효하지 않거나 만료된 토큰입니다.');
-    }
+    } 
   }
 
   private extractToken(request): string | null {

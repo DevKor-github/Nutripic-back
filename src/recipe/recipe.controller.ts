@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
 import { FirebaseAuthGuard } from 'src/auth/auth.guard';
@@ -19,12 +20,14 @@ import { RecipeFilterDto } from './dto/recipeFilter.dto';
 @Controller('recipe')
 export class RecipeController {
   constructor(private readonly recipeService: RecipeService) {}
+  private logger: Logger = new Logger(RecipeController.name);
 
   //레시피 추천 (현재 식재료 기반)
   @UseGuards(FirebaseAuthGuard)
   @Get('recommended')
   @HttpCode(HttpStatus.OK)
   getRecommendedRecipe(@User() userId: string): Promise<number[][]> {
+    this.logger.log(`Get recommended recipe by user: ${userId}`);
     return this.recipeService.getRecommandedRecipe(userId);
   }
 
@@ -34,6 +37,7 @@ export class RecipeController {
   getRecipePreviews(
     @Body('recipeIds') recipeIds: number[]
   ): Promise<RecipePreviewDto[]> {
+    this.logger.log(`Get recipe previews of ${recipeIds}`);
     return this.recipeService.getRecipePreviews(recipeIds);
   }
 
