@@ -10,6 +10,16 @@ import * as cookieParser from 'cookie-parser';
 import { PrismaService } from './prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 
+function logMemoryUsage(stage: string) {
+  const memoryUsage = process.memoryUsage();
+  Logger.log(
+    `Memory usage at ${stage}: 
+    RSS: ${(memoryUsage.rss / 1024 / 1024).toFixed(2)} MB, 
+    Heap Total: ${(memoryUsage.heapTotal / 1024 / 1024).toFixed(2)} MB, 
+    Heap Used: ${(memoryUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`
+  );
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'warn', 'error'],
@@ -49,8 +59,9 @@ async function bootstrap() {
     app,
     document
   );
-
+  
   await app.listen(configService.get('SERVER_PORT'), '0.0.0.0');
+  logMemoryUsage('after app listen')
 
   const logger = new Logger('bootstrap');
   logger.log(`Application is running on: ${await app.getUrl()}`);
