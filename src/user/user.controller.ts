@@ -5,10 +5,14 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { FirebaseAuthGuard, Public } from 'src/auth/auth.guard';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { User } from 'src/utils/decorator/user.decorator';
 import { UserService } from './user.service';
 
@@ -18,22 +22,37 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @ApiOperation({ summary: '현재 유저 uid 가져오기' })
+  @ApiOkResponse({
+    type: String,
+  })
   @HttpCode(HttpStatus.OK)
-  @UseGuards(FirebaseAuthGuard)
   @Get('uid')
   getUid(@User('uid') uid: string): string {
     return uid;
   }
 
+  @ApiOperation({ summary: '유저 uid를 데이터베이스에 추가' })
+  @ApiOkResponse({
+    type: String,
+  })
+  @ApiBadRequestResponse({
+    description: '이미 존재하는 uid입니다.',
+  })
   @HttpCode(HttpStatus.OK)
-  @UseGuards(FirebaseAuthGuard)
   @Post('create')
   createUser(@User('uid') uid: string): Promise<string> {
     return this.userService.createUser(uid);
   }
 
+  @ApiOperation({ summary: '유저 uid를 데이터베이스에서 삭제' })
+  @ApiOkResponse({
+    type: String,
+  })
+  @ApiBadRequestResponse({
+    description: '존재하지 않는 uid입니다.',
+  })
   @HttpCode(HttpStatus.OK)
-  @UseGuards(FirebaseAuthGuard)
   @Delete('delete')
   deleteUser(@User('uid') uid: string): Promise<string> {
     return this.userService.deleteUser(uid);
