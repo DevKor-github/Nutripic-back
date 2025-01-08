@@ -13,6 +13,7 @@ import {
   ApiBadGatewayResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -48,7 +49,7 @@ export class StorageController {
 
   @ApiOperation({ summary: '식재료 추가' })
   @ApiBody({ type: [CreateFoodDto], description: '추가할 식재료 정보 (배열)' })
-  @ApiOkResponse({
+  @ApiCreatedResponse({
     type: FoodDto,
     isArray: true,
     description: '추가된 식재료 목록 반환',

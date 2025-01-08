@@ -9,6 +9,7 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -33,13 +34,13 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '유저 uid를 데이터베이스에 추가' })
-  @ApiOkResponse({
+  @ApiCreatedResponse({
     type: String,
   })
   @ApiBadRequestResponse({
     description: '이미 존재하는 uid입니다.',
   })
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   @Post('create')
   createUser(@User('uid') uid: string): Promise<string> {
     return this.userService.createUser(uid);
