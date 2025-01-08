@@ -39,14 +39,9 @@ export class StorageService {
   }
 
   //식재료 삭제
-  //!TODO: number만 넘기도록 수정
-  async deleteFood(userId: string, foodIds: number[]): Promise<Food[]> {
-    return Promise.all(
-      foodIds.map(async (foodId) => {
-        const foodToDelete = await this.checkIsFoodOwner(userId, foodId);
-        return this.storageRepository.deleteByFoodId(foodToDelete.id);
-      })
-    );
+  async deleteFood(userId: string, foodIds: number[]): Promise<number> {
+    await this.checkIsFoodOwner(userId, foodIds);
+    return this.storageRepository.deleteManyFoods(foodIds);
   }
 
   //식재료 정보 수정
@@ -54,7 +49,8 @@ export class StorageService {
     userId: string,
     newFoodInfo: UpdateFoodDto
   ): Promise<Food> {
-    const food = await this.checkIsFoodOwner(userId, newFoodInfo.id);
+    const food = await this.storageRepository.findByFoodId(newFoodInfo.id);
+    if (food.userId != userId) throw new UnauthorizedException();
 
     const newFood: UpdateFoodDto = {
       ...food,
@@ -64,10 +60,13 @@ export class StorageService {
     return this.storageRepository.updateFoodInfo(newFood);
   }
 
-  //수정하는 식재료가 로그인한 유저 소유인지 확인
-  async checkIsFoodOwner(userId: string, foodId: number): Promise<Food> {
-    const food = await this.storageRepository.findByFoodId(foodId);
-    if (food.userId != userId) throw new UnauthorizedException();
-    return food;
+  //삭제하는 식재료가 로그인한 유저 소유인지 확인
+  async checkIsFoodOwner(userId: string, foodIds: number[]): Promise<boolean> {
+    const foodInfo = await this.storageRepository.findFoodsWithOwner(
+      userId,
+      foodIds
+    );
+    if (foodInfo.length != foodIds.length) throw new UnauthorizedException();
+    return true;
   }
 }

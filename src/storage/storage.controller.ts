@@ -54,7 +54,7 @@ export class StorageController {
   deleteFood(
     @User() userId: string,
     @Body() foodIds: number[]
-  ): Promise<Food[]> {
+  ): Promise<number> {
     return this.storageService.deleteFood(userId, foodIds);
   }
 

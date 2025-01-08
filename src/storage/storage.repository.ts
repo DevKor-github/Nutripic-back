@@ -31,10 +31,17 @@ export class StorageRepository {
     });
   }
 
-  async deleteByFoodId(id: number): Promise<Food> {
-    return this.prisma.food.delete({
-      where: { id },
+  async findFoodsWithOwner(userId: string, foodIds: number[]): Promise<Food[]> {
+    return this.prisma.food.findMany({
+      where: { id: { in: foodIds }, userId: userId },
     });
+  }
+
+  async deleteManyFoods(foodIds: number[]): Promise<number> {
+    const deleteCount = await this.prisma.food.deleteMany({
+      where: { id: { in: foodIds } },
+    });
+    return deleteCount.count;
   }
 
   async updateFoodInfo(foodInfo: UpdateFoodDto): Promise<Food> {
