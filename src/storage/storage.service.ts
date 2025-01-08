@@ -1,5 +1,6 @@
 import {
   BadGatewayException,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -62,9 +63,7 @@ export class StorageService {
   ): Promise<FoodDto> {
     const food = await this.storageRepository.findByFoodId(newFoodInfo.id);
     if (food.userId != userId)
-      throw new UnauthorizedException(
-        '해당 식재료에 대한 접근 권한이 없습니다.'
-      );
+      throw new ForbiddenException('해당 식재료에 대한 접근 권한이 없습니다.');
 
     const newFood: UpdateFoodDto = {
       ...food,
@@ -82,9 +81,7 @@ export class StorageService {
       foodIds
     );
     if (foodInfo.length != foodIds.length)
-      throw new UnauthorizedException(
-        '해당 식재료에 대한 접근 권한이 없습니다.'
-      );
+      throw new ForbiddenException('해당 식재료에 대한 접근 권한이 없습니다.');
     return true;
   }
 }

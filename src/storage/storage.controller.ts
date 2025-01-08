@@ -14,6 +14,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiCreatedResponse,
+  ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -75,12 +76,20 @@ export class StorageController {
     type: Number,
     description: '삭제된 식재료 개수 반환',
   })
-  @ApiUnauthorizedResponse({
+  @ApiForbiddenResponse({
     description: '해당 식재료에 대한 접근 권한이 없습니다.',
     example: {
-      statusCode: 401,
+      statusCode: 403,
       message: '해당 식재료에 대한 접근 권한이 없습니다.',
-      error: 'Unauthorized',
+      error: 'Forbidden',
+    },
+  })
+  @ApiBadGatewayResponse({
+    description: '식재료 삭제에 실패했습니다.',
+    example: {
+      statusCode: 502,
+      message: '식재료 삭제에 실패했습니다.',
+      error: 'Bad Gateway',
     },
   })
   @Delete('/delete')
@@ -102,12 +111,12 @@ export class StorageController {
     type: FoodDto,
     description: '수정된 식재료 정보 반환',
   })
-  @ApiUnauthorizedResponse({
+  @ApiForbiddenResponse({
     description: '해당 식재료에 대한 접근 권한이 없습니다.',
     example: {
-      statusCode: 401,
+      statusCode: 403,
       message: '해당 식재료에 대한 접근 권한이 없습니다.',
-      error: 'Unauthorized',
+      error: 'Forbidden',
     },
   })
   @ApiBadGatewayResponse({

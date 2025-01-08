@@ -7,9 +7,12 @@ import {
   Post,
 } from '@nestjs/common';
 import {
+  ApiBadGatewayResponse,
   ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -34,12 +37,9 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '유저 uid를 데이터베이스에 추가' })
-  @ApiCreatedResponse({
-    type: String,
-  })
-  @ApiBadRequestResponse({
-    description: '이미 존재하는 uid입니다.',
-  })
+  @ApiCreatedResponse({ type: String })
+  @ApiConflictResponse({ description: '이미 존재하는 uid 입니다.' })
+  @ApiBadGatewayResponse({ description: '유저 생성에 실패했습니다.' })
   @HttpCode(HttpStatus.CREATED)
   @Post('create')
   createUser(@User('uid') uid: string): Promise<string> {
@@ -47,11 +47,9 @@ export class UserController {
   }
 
   @ApiOperation({ summary: '유저 uid를 데이터베이스에서 삭제' })
+  @ApiNotFoundResponse({ description: '존재하지 않는 uid 입니다.' })
   @ApiOkResponse({
     type: String,
-  })
-  @ApiBadRequestResponse({
-    description: '존재하지 않는 uid입니다.',
   })
   @HttpCode(HttpStatus.OK)
   @Delete('delete')

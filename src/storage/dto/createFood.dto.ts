@@ -42,7 +42,7 @@ export class CreateFoodDto {
 
   @ApiProperty({
     description: '추가 날짜',
-    example: '2024-11-12T19:30:00.000Z',
+    default: new Date(),
   })
   @IsDateString()
   @IsOptional() //기본값: 추가한 일시
@@ -59,6 +59,7 @@ export class CreateFoodDto {
   @ApiProperty({
     description: '유통기한 지남 여부',
     example: false,
+    default: false,
   })
   @IsBoolean()
   @IsOptional() //기본값: false (유통기한 지나지 않음)
