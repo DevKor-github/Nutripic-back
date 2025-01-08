@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadGatewayException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Storage, StorageType } from '@prisma/client';
 import { StorageRepository } from './storage.repository';
 import { UpdateFoodDto } from './dto/updateFood.dto';
@@ -45,7 +49,10 @@ export class StorageService {
   //식재료 삭제
   async deleteFood(userId: string, foodIds: number[]): Promise<number> {
     await this.checkIsFoodOwner(userId, foodIds);
-    return this.storageRepository.deleteManyFoods(foodIds);
+    const deleteCount = await this.storageRepository.deleteManyFoods(foodIds);
+    if (deleteCount != foodIds.length)
+      throw new BadGatewayException('식재료 삭제에 실패했습니다.');
+    return deleteCount;
   }
 
   //식재료 정보 수정
@@ -54,13 +61,17 @@ export class StorageService {
     newFoodInfo: UpdateFoodDto
   ): Promise<FoodDto> {
     const food = await this.storageRepository.findByFoodId(newFoodInfo.id);
-    if (food.userId != userId) throw new UnauthorizedException();
+    if (food.userId != userId)
+      throw new UnauthorizedException(
+        '해당 식재료에 대한 접근 권한이 없습니다.'
+      );
 
     const newFood: UpdateFoodDto = {
       ...food,
       ...newFoodInfo,
     };
-
+    if (!newFood)
+      throw new BadGatewayException('식재료 정보 수정에 실패했습니다.');
     return this.storageRepository.updateFoodInfo(newFood);
   }
 
@@ -70,7 +81,10 @@ export class StorageService {
       userId,
       foodIds
     );
-    if (foodInfo.length != foodIds.length) throw new UnauthorizedException();
+    if (foodInfo.length != foodIds.length)
+      throw new UnauthorizedException(
+        '해당 식재료에 대한 접근 권한이 없습니다.'
+      );
     return true;
   }
 }

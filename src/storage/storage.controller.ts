@@ -8,16 +8,16 @@ import {
   Logger,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBadGatewayResponse,
   ApiBearerAuth,
   ApiBody,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { FirebaseAuthGuard } from 'src/auth/auth.guard';
 import { User } from 'src/utils/decorator/user.decorator';
 import { StorageService } from './storage.service';
 import { UpdateFoodDto } from './dto/updateFood.dto';
@@ -42,7 +42,7 @@ export class StorageController {
   getFood(
     @User() userId: string
   ): Promise<{ storage: string; foods: FoodDto[] }[]> {
-    this.logger.log(`Get food by user: ${userId}`);
+    this.logger.log(`Get food`);
     return this.storageService.getStorageByUser(userId);
   }
 
@@ -59,6 +59,7 @@ export class StorageController {
     @User() userId: string,
     @Body() foods: CreateFoodDto[]
   ): Promise<FoodDto[]> {
+    this.logger.log(`Add food`);
     return this.storageService.createFoods(userId, foods);
   }
 
@@ -73,33 +74,56 @@ export class StorageController {
     type: Number,
     description: '삭제된 식재료 개수 반환',
   })
-  @UseGuards(FirebaseAuthGuard)
+  @ApiUnauthorizedResponse({
+    description: '해당 식재료에 대한 접근 권한이 없습니다.',
+    example: {
+      statusCode: 401,
+      message: '해당 식재료에 대한 접근 권한이 없습니다.',
+      error: 'Unauthorized',
+    },
+  })
   @Delete('/delete')
   @HttpCode(HttpStatus.OK)
   deleteFood(
     @User() userId: string,
     @Body() foodIds: number[]
   ): Promise<number> {
+    this.logger.log(`Delete food`);
     return this.storageService.deleteFood(userId, foodIds);
   }
 
-  //식재료 정보 수정
   @ApiOperation({ summary: '식재료 정보 수정' })
   @ApiBody({
     type: UpdateFoodDto,
-    description: '수정할 식재료 ID, 수정 정보 (id 제외 모두 optional field)',
+    description: '수정할 식재료 ID, 수정 정보 (id 제외 모두 optional)',
   })
   @ApiOkResponse({
     type: FoodDto,
     description: '수정된 식재료 정보 반환',
   })
-  @UseGuards(FirebaseAuthGuard)
+  @ApiUnauthorizedResponse({
+    description: '해당 식재료에 대한 접근 권한이 없습니다.',
+    example: {
+      statusCode: 401,
+      message: '해당 식재료에 대한 접근 권한이 없습니다.',
+      error: 'Unauthorized',
+    },
+  })
+  @ApiBadGatewayResponse({
+    description: '식재료 정보 수정에 실패했습니다.',
+    example: {
+      statusCode: 502,
+      message: '식재료 정보 수정에 실패했습니다.',
+      error: 'Bad Gateway',
+    },
+  })
   @Put('/update')
   @HttpCode(HttpStatus.OK)
   updateFood(
     @User() userId: string,
     @Body() food: UpdateFoodDto
   ): Promise<FoodDto> {
+    this.logger.log(`Update food`);
     return this.storageService.updateFoodInfo(userId, food);
   }
 }
