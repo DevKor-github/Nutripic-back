@@ -61,6 +61,8 @@ export class FirebaseAuthGuard implements CanActivate {
     if (authHeader && authHeader.startsWith('Bearer ')) {
       return authHeader.split(' ')[1];
     } else
-      throw new UnauthorizedException('토큰이 없거나 유효하지 않은 형식입니다');
+      throw new UnauthorizedException(
+        '토큰이 없거나 유효하지 않은 형식입니다.'
+      );
   }
 }
