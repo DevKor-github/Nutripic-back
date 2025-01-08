@@ -9,17 +9,23 @@ import {
 } from 'class-validator';
 
 export class CreateFoodDto {
-  @ApiProperty({ description: 'fridge/freezer/room' })
+  @ApiProperty({
+    description: 'fridge/freezer/room',
+    example: 'fridge',
+  })
   @IsString()
   @IsNotEmpty()
   storageType: StorageType;
 
-  @ApiProperty({ description: '식재료 이름' })
+  @ApiProperty({
+    description: '식재료 이름',
+    example: '토마토',
+  })
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ description: '대분류' })
+  @ApiProperty({ description: '대분류', example: '채소' })
   @IsString()
   @IsNotEmpty()
   class1: string;
@@ -34,17 +40,26 @@ export class CreateFoodDto {
   @IsOptional()
   icon?: string;
 
-  @ApiProperty({ description: '추가 날짜' })
+  @ApiProperty({
+    description: '추가 날짜',
+    example: '2024-11-12T19:30:00.000Z',
+  })
   @IsDateString()
   @IsOptional() //기본값: 추가한 일시
   addedDate?: string | Date;
 
-  @ApiProperty({ description: '유통기한' })
+  @ApiProperty({
+    description: '유통기한',
+    example: '2024-11-12T19:30:00.000Z',
+  })
   @IsDateString()
   @IsOptional() //TODO: empty? 기본 값 논의
   expireDate?: string | Date;
 
-  @ApiProperty({ description: '유통기한 지남 여부' })
+  @ApiProperty({
+    description: '유통기한 지남 여부',
+    example: false,
+  })
   @IsBoolean()
   @IsOptional() //기본값: false (유통기한 지나지 않음)
   expired?: boolean;

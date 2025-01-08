@@ -17,6 +17,7 @@ import { RecipeDto } from './dto/recipe.dto';
 import { RecipePreviewDto } from './dto/recipePreview.dto';
 import { RecipeFilterDto } from './dto/recipeFilter.dto';
 import {
+  ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -25,6 +26,7 @@ import {
 import { array } from 'joi';
 
 @ApiTags('Recipe')
+@ApiBearerAuth()
 @Controller('recipe')
 export class RecipeController {
   constructor(private readonly recipeService: RecipeService) {}

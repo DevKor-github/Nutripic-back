@@ -20,12 +20,18 @@ export class UpdateFoodDto {
   @IsOptional()
   storageType?: StorageType;
 
-  @ApiProperty({ description: '식재료 이름' })
+  @ApiProperty({
+    description: '식재료 이름',
+    example: '토마토',
+  })
   @IsString()
   @IsOptional()
   name?: string;
 
-  @ApiProperty({ description: '대분류' })
+  @ApiProperty({
+    description: '대분류',
+    example: '채소',
+  })
   @IsString()
   @IsOptional()
   class1?: string;
@@ -40,17 +46,26 @@ export class UpdateFoodDto {
   @IsOptional()
   icon?: string;
 
-  @ApiProperty({ description: '추가 날짜' })
+  @ApiProperty({
+    description: '추가 날짜',
+    example: '2024-11-12T19:30:00.000Z',
+  })
   @IsDateString()
   @IsOptional()
   addedDate?: string | Date;
 
-  @ApiProperty({ description: '유통기한' })
+  @ApiProperty({
+    description: '유통기한',
+    example: '2024-11-12T19:30:00.000Z',
+  })
   @IsDateString()
   @IsOptional()
   expireDate?: string | Date;
 
-  @ApiProperty({ description: '유통기한 지남 여부' })
+  @ApiProperty({
+    description: '유통기한 지남 여부',
+    example: false,
+  })
   @IsBoolean()
   @IsOptional()
   expired?: boolean;

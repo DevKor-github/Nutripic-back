@@ -1,15 +1,19 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { Food, Storage, StorageType } from '@prisma/client';
+import { Storage, StorageType } from '@prisma/client';
 import { StorageRepository } from './storage.repository';
 import { UpdateFoodDto } from './dto/updateFood.dto';
 import { CreateFoodDto } from './dto/createFood.dto';
+import { FoodDto } from './dto/food.dto';
 
 @Injectable()
 export class StorageService {
   constructor(private storageRepository: StorageRepository) {}
 
   //식재료 추가
-  async createFoods(userId: string, Foods: CreateFoodDto[]): Promise<Food[]> {
+  async createFoods(
+    userId: string,
+    Foods: CreateFoodDto[]
+  ): Promise<FoodDto[]> {
     //TODO: 식재료 유통기한 정보 추가
 
     return this.storageRepository.createFoods(userId, Foods);
@@ -18,7 +22,7 @@ export class StorageService {
   //내 식재료 가져오기
   async getStorageByUser(
     userId: string
-  ): Promise<{ storage: string; foods: Food[] }[]> {
+  ): Promise<{ storage: string; foods: FoodDto[] }[]> {
     const storages: Storage[] = [
       { userId, type: StorageType.freezer },
       { userId, type: StorageType.fridge },
@@ -48,7 +52,7 @@ export class StorageService {
   async updateFoodInfo(
     userId: string,
     newFoodInfo: UpdateFoodDto
-  ): Promise<Food> {
+  ): Promise<FoodDto> {
     const food = await this.storageRepository.findByFoodId(newFoodInfo.id);
     if (food.userId != userId) throw new UnauthorizedException();
 
