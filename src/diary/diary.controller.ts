@@ -31,6 +31,7 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
+import { GetDailyDiaryResDto } from './dto/getDailyDiary.dto';
 
 @ApiTags('Diary')
 @Controller('diary')
@@ -70,6 +71,15 @@ export class DiaryController {
   ): Promise<GetAllDiaryResDto[]> {
     this.logger.log(`Get All Diary by user: ${uid}`);
     return this.diaryService.getDiaryByUser(uid, index);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  getDailyDiary(
+    @User() uid: string,
+    @Param('date') date: string
+  ): Promise<GetDailyDiaryResDto[]> {
+    this.logger.log(`Get Daily Diary by date and user ${uid}, ${date}`);
+    return;
   }
 
   @ApiOperation({ summary: '특정 다이어리 조회' })

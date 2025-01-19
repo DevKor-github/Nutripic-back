@@ -37,6 +37,13 @@ export class DiaryService {
     }));
   }
 
+  async getDiaryByDate(
+    userId: number,
+    date: string
+  ): Promise<GetDiaryResDto[]> {
+    return;
+  }
+
   async getDiaryById(
     diaryId: number,
     userId?: string
