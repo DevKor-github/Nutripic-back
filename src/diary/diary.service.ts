@@ -10,6 +10,18 @@ import { GetAllDiaryResDto } from './dto/getAllDiary.dto';
 import { GetDiaryResDto } from './dto/getDiary.dto';
 import { CreateDiaryReqDto } from './dto/createDiary.dto';
 import { UpdateDiaryReqDto, UpdateDiaryResDto } from './dto/updateDiary.dto';
+import { GetDailyDiaryResDto } from './dto/getDailyDiary.dto';
+
+const indexToMonth = (
+  index: number
+): { targetYear: number; targetMonth: number } => {
+  const today = new Date();
+  const targetDate = new Date(today.setMonth(today.getMonth() - index));
+  const targetMonth = targetDate.getMonth();
+  const targetYear = targetDate.getFullYear();
+
+  return { targetYear: targetYear, targetMonth: targetMonth };
+};
 
 @Injectable()
 export class DiaryService {
@@ -20,15 +32,13 @@ export class DiaryService {
     userId: string,
     index: number
   ): Promise<GetAllDiaryResDto[]> {
-    const today = new Date();
-    const targetDate = new Date(today.setMonth(today.getMonth() - index));
-    const targetMonth = targetDate.getMonth();
-    const targetYear = targetDate.getFullYear();
+    const { targetYear, targetMonth } = indexToMonth(index);
 
-    const diaries = await this.diaryRepository.getDiaryByUser(
+    const diaries = await this.diaryRepository.getDiaries(
       userId,
       targetYear,
-      targetMonth
+      targetMonth,
+      null
     );
     return diaries.map((diary) => ({
       id: diary.id,
@@ -37,10 +47,25 @@ export class DiaryService {
     }));
   }
 
-  async getDiaryByDate(
-    userId: number,
-    date: string
-  ): Promise<GetDiaryResDto[]> {
+  async getDiaryByDay(
+    userId: string,
+    index: number,
+    day: number
+  ): Promise<GetDailyDiaryResDto[]> {
+    const { targetYear, targetMonth } = indexToMonth(index);
+
+    const diaries = await this.diaryRepository.getDiaries(
+      userId,
+      targetYear,
+      targetMonth,
+      day
+    );
+    return diaries.map((diary) => ({
+      id: diary.id,
+      url: diary.url,
+      date: diary.date,
+    }));
+
     return;
   }
 

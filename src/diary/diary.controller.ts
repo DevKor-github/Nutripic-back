@@ -73,13 +73,32 @@ export class DiaryController {
     return this.diaryService.getDiaryByUser(uid, index);
   }
 
+  @ApiOperation({ summary: '특정 일자 다이어리 조회' })
+  @ApiParam({
+    name: 'index',
+    required: true,
+    description: '현재 월을 기준으로 캘린더를 앞뒤로 넘긴 횟수',
+    example: 0,
+  })
+  @ApiParam({
+    name: 'day',
+    required: true,
+    description: '조회하고자 하는 일자',
+    example: 17,
+  })
+  @ApiOkResponse({
+    type: GetDailyDiaryResDto,
+    isArray: true,
+  })
+  @Get('calendar/:index/:day')
   @HttpCode(HttpStatus.OK)
   getDailyDiary(
     @User() uid: string,
-    @Param('date') date: string
+    @Param('index', ParseIntPipe) index: number,
+    @Param('day', ParseIntPipe) day: number
   ): Promise<GetDailyDiaryResDto[]> {
-    this.logger.log(`Get Daily Diary by date and user ${uid}, ${date}`);
-    return;
+    this.logger.log(`Get Daily Diary by user and day: ${uid}, ${day}`);
+    return this.diaryService.getDiaryByDay(uid, index, day);
   }
 
   @ApiOperation({ summary: '특정 다이어리 조회' })

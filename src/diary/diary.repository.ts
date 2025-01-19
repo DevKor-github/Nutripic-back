@@ -13,21 +13,32 @@ export class DiaryRepository {
     });
   }
 
-  async getDiaryByUser(
+  async getDiaries(
     userId: string,
     year: number,
-    month: number
+    month: number,
+    day: number | null
   ): Promise<Diary[]> {
-    return await this.prisma.diary.findMany({
-      where: {
-        userId: userId,
-        date: {
-          gte: new Date(year, month, 1),
-          lt: new Date(year, month + 1, 1), // 해당 년월에 생성된 다이어리
-        },
-        isDeleted: false,
-      },
-    });
+    return day
+      ? await this.prisma.diary.findMany({
+          where: {
+            userId: userId,
+            date: {
+              equals: new Date(year, month, day),
+            },
+            isDeleted: false,
+          },
+        })
+      : await this.prisma.diary.findMany({
+          where: {
+            userId: userId,
+            date: {
+              gte: new Date(year, month, 1),
+              lt: new Date(year, month + 1, 1), // 해당 년월에 생성된 다이어리
+            },
+            isDeleted: false,
+          },
+        });
   }
 
   createDiary(
