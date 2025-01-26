@@ -50,8 +50,8 @@ model Food {
 
 model FoodInfo {
   id           Int    @id @default(autoincrement())
-  category1    String @db.VarChar(255) //대분류
-  category2    String @db.VarChar(255) @default("기타") //중분류
+  class1    String @db.VarChar(255) //대분류
+  class2    String @db.VarChar(255) @default("기타") //중분류
   storageType  StorageType @map("storage_type")
   expireDate   Int?   @map("expire_date") //일 단위
 

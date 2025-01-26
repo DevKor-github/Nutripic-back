@@ -11,7 +11,7 @@ export class ImageToFoodService {
     });
   }
 
-  async analyzeImage(image: Express.Multer.File): Promise<string> {
+  async analyzeImage(image: Express.Multer.File): Promise<string[]> {
     try {
       const base64Image = image.buffer.toString('base64');
 
@@ -48,8 +48,14 @@ export class ImageToFoodService {
       });
 
       const response_data = completion.choices[0].message.content;
-      console.log(response_data);
-      return response_data;
+      //ex: - 감자\n - 토마토\n - 당근
+
+      const food_list = response_data
+        .split('\n')
+        .map((food) => food.replace('- ', ''));
+      //ex: ['감자', '토마토', '당근']
+
+      return food_list;
     } catch (error) {
       throw new InternalServerErrorException(
         `Failed to analyze image: ${error.message}`
