@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ImageToFoodService } from './image-to-food.service';
+import { ImageToFoodService } from './imageToFood.service';
 
 describe('ImageToFoodService', () => {
   let service: ImageToFoodService;

@@ -4,7 +4,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { ImageToFoodService } from './image-to-food.service';
+import { ImageToFoodService } from './imageToFood.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Public } from 'src/auth/auth.guard';
 

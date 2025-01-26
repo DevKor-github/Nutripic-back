@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ImageToFoodController } from './image-to-food.controller';
+import { ImageToFoodController } from './imageToFood.controller';
 
 describe('ImageToFoodController', () => {
   let controller: ImageToFoodController;
