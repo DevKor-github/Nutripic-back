@@ -26,7 +26,7 @@ export class ImageToFoodRepository {
         storageType: food.storageType,
         class1: food.class1,
         class2: food.class2,
-        expireDate,
+        expireDate: expireDate.toISOString(),
       });
     });
 
