@@ -18,17 +18,17 @@ export class imageFoodListDto {
 
   @IsString()
   @IsNotEmpty()
-  storageType: StorageType;
+  storageType: StorageType = 'fridge';
 
   @IsString()
   @IsNotEmpty()
-  category1: string;
+  class1: string = '기타';
 
   @IsString()
   @IsOptional()
-  category2: string;
+  class2: string = '기타';
 
   @IsDateString()
   @IsOptional()
-  expireDate: Date | string;
+  expireDate: Date | string = 'unknown';
 }

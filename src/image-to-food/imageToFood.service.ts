@@ -1,25 +1,33 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
+import { ImageToFoodRepository } from './imageToFood.repository';
+import { imageFoodListDto } from './dto/imageFoodList.dto';
 
 @Injectable()
 export class ImageToFoodService {
   private readonly openAi: OpenAI;
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly imageToFoodRepository: ImageToFoodRepository
+  ) {
     this.openAi = new OpenAI({
       apiKey: this.configService.get('OPENAI_API_KEY'),
     });
   }
 
-  async analyzeImage(image: Express.Multer.File): Promise<string[]> {
+  async analyzeImage(image: Express.Multer.File): Promise<imageFoodListDto[]> {
     try {
       const base64Image = image.buffer.toString('base64');
 
-      // const messages = [
-      //     { role: 'user', content: "What's in this image?" },
-      //     { role: 'user', content: '이 안에 있는 식재료가 뭐가 있는지 다 말해줘.' },
-      //     { role: 'user', content: `data:image/jpeg;base64,${base64Image}` },
-      // ];
+      const messages = [
+        { role: 'user', content: "What's in this image?" },
+        {
+          role: 'user',
+          content: '이 안에 있는 식재료가 뭐가 있는지 다 말해줘.',
+        },
+        { role: 'user', content: `data:image/jpeg;base64,${base64Image}` },
+      ];
 
       const completion = await this.openAi.chat.completions.create({
         model: 'gpt-4o',
@@ -55,7 +63,7 @@ export class ImageToFoodService {
         .map((food) => food.replace('- ', ''));
       //ex: ['감자', '토마토', '당근']
 
-      return food_list;
+      return this.imageToFoodRepository.matchFoodInfo(food_list);
     } catch (error) {
       throw new InternalServerErrorException(
         `Failed to analyze image: ${error.message}`
