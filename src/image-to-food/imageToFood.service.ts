@@ -20,15 +20,6 @@ export class ImageToFoodService {
     try {
       const base64Image = image.buffer.toString('base64');
 
-      const messages = [
-        { role: 'user', content: "What's in this image?" },
-        {
-          role: 'user',
-          content: '이 안에 있는 식재료가 뭐가 있는지 다 말해줘.',
-        },
-        { role: 'user', content: `data:image/jpeg;base64,${base64Image}` },
-      ];
-
       const completion = await this.openAi.chat.completions.create({
         model: 'gpt-4o',
         messages: [
