@@ -5,5 +5,5 @@ export class DeleteFoodDto {
   @ApiProperty({ description: '식재료 id' })
   @IsNumber()
   @IsNotEmpty()
-  id: number;
+  id: number[];
 }

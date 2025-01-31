@@ -9,7 +9,7 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
-    "start:dev": "cross-env NODE_ENV=development nest start --watch",
+    "start:dev": "cross-env NODE_OPTIONS=--max-old-space-size=1024 NODE_ENV=development nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "cross-env NODE_ENV=production node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -19,7 +19,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:dev": "dotenv -e .env.development -- npx prisma",
-    "prisma:prod": "dotenv -e .env.production -- npx prisma"
+    "prisma:prod": "dotenv -e .env.production -- npx prisma",
+    "pm2:start:dev": "cross-env NODE_OPTIONS=--max-old-space-size=1024 NODE_ENV=development pm2 start ecosystem.config.js --watch",
+    "pm2:start:prod": "cross-env NODE_OPTIONS=--max-old-space-size=1024 NODE_ENV=production pm2 start ecosystem.config.js"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -39,6 +41,7 @@
     "joi": "^17.13.3",
     "passport": "^0.7.0",
     "pg": "^8.13.0",
+    "pm2": "^5.4.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
   },
