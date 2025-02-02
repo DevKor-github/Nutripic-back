@@ -17,7 +17,7 @@ export class ImageToFoodController {
   @UseInterceptors(FileInterceptor('image'))
   async analyzeImage(
     @UploadedFile() image: Express.Multer.File
-  ): Promise<CreateFoodDto[] | { message: string }> {
+  ): Promise<CreateFoodDto[][] | { message: string }> {
     if (!image) {
       return {
         message: 'No image uploaded',

@@ -16,7 +16,7 @@ export class ImageToFoodService {
     });
   }
 
-  async analyzeImage(image: Express.Multer.File): Promise<CreateFoodDto[]> {
+  async analyzeImage(image: Express.Multer.File): Promise<CreateFoodDto[][]> {
     try {
       const base64Image = image.buffer.toString('base64');
 
@@ -54,7 +54,19 @@ export class ImageToFoodService {
         .map((food) => food.replace('- ', ''));
       //ex: ['감자', '토마토', '당근']
 
-      return this.imageToFoodRepository.matchFoodInfo(food_list);
+      const foodInfo =
+        await this.imageToFoodRepository.matchFoodInfo(food_list);
+      const foodInfoByStorage = [[], [], []];
+      foodInfo.forEach((food) => {
+        if (food.storageType === 'fridge') {
+          foodInfoByStorage[0].push(food);
+        } else if (food.storageType === 'freezer') {
+          foodInfoByStorage[1].push(food);
+        } else {
+          foodInfoByStorage[2].push(food);
+        }
+      });
+      return foodInfoByStorage; //fridge, freezer, room 순서
     } catch (error) {
       throw new InternalServerErrorException(
         `Failed to analyze image: ${error.message}`
