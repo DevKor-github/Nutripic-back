@@ -30,7 +30,7 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
         break;
       }
       default:
-        // default 500 error code
+        // default error code: 500
         const status = HttpStatus.INTERNAL_SERVER_ERROR;
         response.status(status).json({
           statusCode: status,

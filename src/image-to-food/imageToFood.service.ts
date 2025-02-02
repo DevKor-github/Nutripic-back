@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 import { ImageToFoodRepository } from './imageToFood.repository';
-import { imageFoodListDto } from './dto/imageFoodList.dto';
+import { CreateFoodDto } from 'src/storage/dto/createFood.dto';
 
 @Injectable()
 export class ImageToFoodService {
@@ -16,7 +16,7 @@ export class ImageToFoodService {
     });
   }
 
-  async analyzeImage(image: Express.Multer.File): Promise<imageFoodListDto[]> {
+  async analyzeImage(image: Express.Multer.File): Promise<CreateFoodDto[]> {
     try {
       const base64Image = image.buffer.toString('base64');
 

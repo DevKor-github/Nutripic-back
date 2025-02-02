@@ -7,6 +7,7 @@ import {
 import { ImageToFoodService } from './imageToFood.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Public } from 'src/auth/auth.guard';
+import { CreateFoodDto } from 'src/storage/dto/createFood.dto';
 
 @Controller('image-to-food')
 export class ImageToFoodController {
@@ -15,14 +16,15 @@ export class ImageToFoodController {
   @Post('analyze')
   @Public()
   @UseInterceptors(FileInterceptor('image'))
-  async analyzeImage(@UploadedFile() image: Express.Multer.File) {
+  async analyzeImage(
+    @UploadedFile() image: Express.Multer.File
+  ): Promise<CreateFoodDto[] | { message: string }> {
     if (!image) {
       return {
         message: 'No image uploaded',
       };
     }
 
-    const ingredients = await this.imageToFoodService.analyzeImage(image);
-    return { ingredients };
+    return this.imageToFoodService.analyzeImage(image);
   }
 }
