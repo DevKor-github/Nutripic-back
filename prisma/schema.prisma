@@ -17,6 +17,7 @@ model User {
   uid             String            @id @unique @db.VarChar(128)
   storage         Storage[]
   recipeBookmark RecipeBookmark[]
+  Diary   Diary[]
 
   @@map("user")
 }
@@ -39,11 +40,22 @@ model Food {
   name         String       @db.VarChar(255)
   class1       String       @db.VarChar(255) //대분류
   class2       String       @db.VarChar(255) @default("기타") //중분류
+  icon         String       @db.VarChar(255) @default("null")
   addedDate    DateTime     @default(now()) @map("added_date")
   expireDate   DateTime?                    @map("expire_date")
   expired      Boolean      @default(false)
 
   @@map("food")
+}
+
+model FoodInfo {
+  id           Int    @id @default(autoincrement())
+  class1    String @db.VarChar(255) //대분류
+  class2    String @db.VarChar(255) @default("기타") //중분류
+  storageType  StorageType @map("storage_type")
+  expireDate   Int?   @map("expire_date") //일 단위
+
+  @@map("food_info")
 }
 
 enum StorageType {
@@ -60,6 +72,7 @@ model Recipe {
   procedure    String
   difficulty   Int //? enum으로 난이도 구분하기?
   cookingTime  Int  @map("cooking_time")//분 단위
+  imageUrl     String @map("image_url") @default("null")
 
   ingredient IngredientRecipeIndex[]
   recipeBookmark  RecipeBookmark[]
@@ -99,3 +112,23 @@ model RecipeBookmark {
   @@id([userId, recipeId])
   @@map("recipe_bookmark")
 }
+
+model Diary{
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [uid])
+  userId String
+  body String
+  date DateTime @default(now()) @db.Timestamp
+  url String
+  isDeleted Boolean @default(false)
+  createdAt DateTime @default(now()) @db.Timestamp
+  deletedAt DateTime? @db.Timestamp
+
+  @@map("diary")
+} // recipe와도 참조관계를 설정하여 어떤 레시피에 따라 요리를 했는지 다이어리에 표시하는 것도 좋을 것 같습니다!
+
+// model DiaryImage{
+//   url String @id
+//   diary Diary @relation(fields: [diaryId], references: [id])
+//   diaryId Int @unique
+// }

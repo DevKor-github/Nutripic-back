@@ -1,6 +1,5 @@
 import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
-import { LocalAuthGuard, JwtAuthGuard } from './auth.guard';
 
 describe('LocalAuthGuard', () => {
   it('should be defined', () => {

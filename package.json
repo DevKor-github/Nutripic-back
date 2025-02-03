@@ -19,7 +19,9 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:dev": "dotenv -e .env.development -- npx prisma",
-    "prisma:prod": "dotenv -e .env.production -- npx prisma"
+    "prisma:prod": "dotenv -e .env.production -- npx prisma",
+    "pm2:start:dev": "cross-env NODE_OPTIONS=--max-old-space-size=1024 NODE_ENV=development pm2 start ecosystem.config.js --watch",
+    "pm2:start:prod": "cross-env NODE_OPTIONS=--max-old-space-size=1024 NODE_ENV=production pm2 start ecosystem.config.js"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -30,14 +32,17 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^7.4.2",
     "@prisma/client": "^5.20.0",
+    "aws-sdk": "^2.1692.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.6",
     "cross-env": "^7.0.3",
     "firebase-admin": "^12.5.0",
     "joi": "^17.13.3",
+    "openai": "^4.80.1",
     "passport": "^0.7.0",
     "pg": "^8.13.0",
+    "pm2": "^5.4.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1"
   },
@@ -48,6 +53,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.2",
+    "@types/multer": "^1.4.12",
     "@types/node": "^20.3.1",
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",

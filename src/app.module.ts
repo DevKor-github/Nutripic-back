@@ -10,7 +10,10 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { FirebaseAuthGuard } from './auth/auth.guard';
 import { StorageModule } from './storage/storage.module';
+import { DiaryModule } from './diary/diary.module';
+import { AwsModule } from './aws/aws.module';
 import { RecipeModule } from './recipe/recipe.module';
+import { ImageToFoodModule } from './image-to-food/imageToFood.module';
 
 @Module({
   imports: [
@@ -23,7 +26,10 @@ import { RecipeModule } from './recipe/recipe.module';
     UserModule,
     PrismaModule,
     StorageModule,
+    DiaryModule,
+    AwsModule,
     RecipeModule,
+    ImageToFoodModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,5 +1,5 @@
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import {
   DocumentBuilder,
   SwaggerCustomOptions,
@@ -9,6 +9,7 @@ import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { PrismaService } from './prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
+import { PrismaClientExceptionFilter } from './prisma-client-exception/prisma-client-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -50,6 +51,12 @@ async function bootstrap() {
     document
   );
 
-  await app.listen(configService.get('SERVER_PORT'));
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
+
+  await app.listen(configService.get('SERVER_PORT'), '0.0.0.0');
+
+  const logger = new Logger('bootstrap');
+  logger.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();

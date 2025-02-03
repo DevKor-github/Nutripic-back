@@ -14,22 +14,33 @@ export class FoodDto {
   @IsOptional()
   id?: number;
 
-  @ApiProperty({ description: '식재료 주인 유저' })
+  @ApiProperty({
+    description: '유저',
+  })
   @IsString()
   @IsOptional()
   userId: string;
 
-  @ApiProperty({ description: 'fridge/freezer/room' })
+  @ApiProperty({
+    description: '스토리지 분류 (fridge/freezer/room)',
+    example: 'fridge',
+  })
   @IsString()
   @IsNotEmpty()
   storageType: StorageType;
 
-  @ApiProperty({ description: '식재료 이름' })
+  @ApiProperty({
+    description: '식재료 이름',
+    example: '토마토',
+  })
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ description: '대분류' })
+  @ApiProperty({
+    description: '대분류',
+    example: '채소',
+  })
   @IsString()
   @IsNotEmpty()
   class1: string;
@@ -39,17 +50,31 @@ export class FoodDto {
   @IsOptional()
   class2?: string;
 
-  @ApiProperty({ description: '추가 날짜' })
+  @ApiProperty({ description: '표시 아이콘 URL' })
+  @IsString()
+  @IsOptional()
+  icon?: string;
+
+  @ApiProperty({
+    description: '추가 날짜',
+    example: '2024-11-12T19:30:00.000Z',
+  })
   @IsDateString()
   @IsOptional()
   addedDate?: string | Date; //TODO: 백엔드에서 추가
 
-  @ApiProperty({ description: '유통기한' })
+  @ApiProperty({
+    description: '추가 날짜',
+    example: '2024-11-12T19:30:00.000Z',
+  })
   @IsDateString()
   @IsOptional() //TODO: empty? 기본 값 논의
   expireDate?: string | Date;
 
-  @ApiProperty({ description: '유통기한 지남 여부' })
+  @ApiProperty({
+    description: '유통기한 지남 여부',
+    example: false,
+  })
   @IsBoolean()
   @IsOptional() //기본값: false (유통기한 지나지 않음)
   expired?: boolean;

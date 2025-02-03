@@ -78,12 +78,21 @@ export class RecipeRepository {
           ? { cookingTime: recipeFilter.cookingTime }
           : {}),
       },
-      select: {
-        id: true,
-        name: true,
-        difficulty: true,
-        cookingTime: true,
+      include: {
+        ingredient: {
+          select: {
+            ingredientName: true,
+            amount: true,
+          },
+        },
       },
+      // select: {
+      //   id: true,
+      //   name: true,
+      //   difficulty: true,
+      //   cookingTime: true,
+      //   imageUrl: true,
+      // },
     });
   }
 
@@ -92,12 +101,21 @@ export class RecipeRepository {
       where: {
         id: { in: recipeIds },
       },
-      select: {
-        id: true,
-        name: true,
-        difficulty: true,
-        cookingTime: true,
+      include: {
+        ingredient: {
+          select: {
+            ingredientName: true,
+            amount: true,
+          },
+        },
       },
+      // select: {
+      //   id: true,
+      //   name: true,
+      //   difficulty: true,
+      //   cookingTime: true,
+      //   imageUrl: true,
+      // },
     });
   }
 
@@ -127,12 +145,21 @@ export class RecipeRepository {
       where: { userId },
       include: {
         recipe: {
-          select: {
-            id: true,
-            name: true,
-            difficulty: true,
-            cookingTime: true,
+          include: {
+            ingredient: {
+              select: {
+                ingredientName: true,
+                amount: true,
+              },
+            },
           },
+          // select: {
+          //   id: true,
+          //   name: true,
+          //   difficulty: true,
+          //   cookingTime: true,
+          //   imageUrl: true,
+          // },
         },
       },
     });
