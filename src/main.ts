@@ -68,7 +68,6 @@ async function bootstrap() {
   logMemoryUsage('after app listen');
 
   const logger = new Logger('bootstrap');
-  logger.log(`server auto restart test using github action`);
   logger.log(`Application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
