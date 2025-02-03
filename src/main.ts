@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import {
   DocumentBuilder,
@@ -9,6 +9,7 @@ import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { PrismaService } from './prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
+import { PrismaClientExceptionFilter } from './prisma-client-exception/prisma-client-exception.filter';
 
 function logMemoryUsage(stage: string) {
   const memoryUsage = process.memoryUsage();
@@ -59,6 +60,9 @@ async function bootstrap() {
     app,
     document
   );
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 
   await app.listen(configService.get('SERVER_PORT'), '0.0.0.0');
   logMemoryUsage('after app listen');
