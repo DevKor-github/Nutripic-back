@@ -46,6 +46,7 @@ export class DiaryRepository {
     userId: string,
     body: string,
     url: string,
+    mealTime: number,
     date: Date
   ): Promise<Diary> {
     return this.prisma.diary.create({
@@ -53,12 +54,13 @@ export class DiaryRepository {
         userId: userId,
         body: body,
         url: url,
+        mealTime: mealTime,
         date: date,
       },
     });
   }
 
-  async updateDiary(diaryId: number, body: string, date: Date): Promise<Diary> {
+  async updateDiary(diaryId: number, body: string, mealTime: number, date: Date): Promise<Diary> {
     return await this.prisma.diary.update({
       where: {
         id: diaryId,
@@ -66,6 +68,7 @@ export class DiaryRepository {
       data: {
         body: body,
         date: date,
+        mealTime: mealTime,
       },
     });
   }
