@@ -60,13 +60,13 @@ export class DiaryService {
       targetMonth,
       day
     );
-    return diaries.map((diary) => ({
-      id: diary.id,
-      url: diary.url,
-      date: diary.date,
-    }));
-
-    return;
+    return diaries.map((diary) => 
+      ({
+        id: diary.id,
+        url: diary.url,
+        date: diary.date,
+      })
+    );
   }
 
   async getDiaryById(
@@ -148,3 +148,4 @@ export class DiaryService {
     };
   }
 }
+
