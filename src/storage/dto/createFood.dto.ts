@@ -55,13 +55,4 @@ export class CreateFoodDto {
   @IsDateString()
   @IsOptional() //TODO: empty? 기본 값 논의
   expireDate?: string | Date;
-
-  @ApiProperty({
-    description: '유통기한 지남 여부',
-    example: false,
-    default: false,
-  })
-  @IsBoolean()
-  @IsOptional() //기본값: false (유통기한 지나지 않음)
-  expired?: boolean;
 }

@@ -4,6 +4,7 @@ import {
   IsBoolean,
   IsDateString,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
@@ -72,10 +73,10 @@ export class FoodDto {
   expireDate?: string | Date;
 
   @ApiProperty({
-    description: '유통기한 지남 여부',
-    example: false,
+    description: '유통기한 임박 일수',
+    example: 3,
   })
-  @IsBoolean()
-  @IsOptional() //기본값: false (유통기한 지나지 않음)
-  expired?: boolean;
+  @IsNumber()
+  @IsOptional()
+  daysTilExpire?: number = null;
 }

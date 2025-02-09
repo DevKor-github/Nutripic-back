@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class DeleteFoodDto {
-  @ApiProperty({ description: '식재료 id' })
-  @IsNumber()
+  @ApiProperty({ description: '삭제할 식재료 id 리스트' })
+  @IsArray()
   @IsNotEmpty()
-  id: number[];
+  @IsNumber({}, { each: true })
+  foodIds: number[];
 }
