@@ -27,7 +27,6 @@ export class ImageToFoodRepository {
         class2: food.class2,
         addedDate: currentDate.toISOString(),
         expireDate: expireDate.toISOString(),
-        expired: false,
       });
     });
 
@@ -41,7 +40,6 @@ export class ImageToFoodRepository {
           class1: '기타',
           class2: '기타',
           addedDate: new Date().toISOString(),
-          expired: false,
         };
       }
     });

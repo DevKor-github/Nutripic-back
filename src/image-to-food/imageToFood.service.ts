@@ -62,7 +62,6 @@ export class ImageToFoodService {
         .map((food) => food.replace('- ', ''));
       // ex: ['감자', '토마토', '당근']
 
-      console.log(response_data);
       const foodInfo =
         await this.imageToFoodRepository.matchFoodInfo(food_list);
       const foodInfoByStorage = [[], [], []];
