@@ -9,14 +9,35 @@ import { FoodDto } from './dto/food.dto';
 export class StorageRepository {
   constructor(private prisma: PrismaService) {}
 
+  calculateDaysTilExpire(foods: FoodDto[]): FoodDto[] {
+    const currentDate = new Date();
+    const currentDateZero = new Date(currentDate.setUTCHours(0, 0, 0, 0));
+
+    return foods.map((food) => {
+      if (food.expireDate === null) {
+        return { ...food, daysTilExpire: null };
+      } //유통기한 만료일이 없다면 daysTilExpire = null
+      const expireDate = new Date(food.expireDate);
+
+      const daysTilExpire = Math.ceil(
+        (new Date(expireDate.setUTCHours(0, 0, 0, 0)).getTime() -
+          currentDateZero.getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+
+      return { ...food, daysTilExpire };
+    });
+  }
+
   //Storage에 저장된 식재료 모두 찾기
   async findFoodByStorage(
     userId: string,
     storageType: StorageType
   ): Promise<FoodDto[]> {
-    return this.prisma.food.findMany({
+    const foodsInStorage = await this.prisma.food.findMany({
       where: { userId, storageType },
     });
+    return this.calculateDaysTilExpire(foodsInStorage);
   }
 
   async createFoods(
@@ -24,27 +45,32 @@ export class StorageRepository {
     foods: CreateFoodDto[]
   ): Promise<FoodDto[]> {
     const createFoodData = foods.map((food) => ({ ...food, userId }));
-    return this.prisma.food.createManyAndReturn({
+    const foodsCreated = await this.prisma.food.createManyAndReturn({
       data: createFoodData,
     });
+    return this.calculateDaysTilExpire(foodsCreated);
   }
 
   async findByFoodId(id: number): Promise<FoodDto> {
-    return this.prisma.food.findUnique({
+    const foodFound = await this.prisma.food.findUnique({
       where: { id },
     });
+    return this.calculateDaysTilExpire([foodFound])[0];
   }
 
   async findFoodsWithOwner(
     userId: string,
     foodIds: number[]
   ): Promise<FoodDto[]> {
-    return this.prisma.food.findMany({
+    console.log(foodIds, userId);
+    const foodsFound = await this.prisma.food.findMany({
       where: { id: { in: foodIds }, userId: userId },
     });
+    return this.calculateDaysTilExpire(foodsFound);
   }
 
   async deleteManyFoods(foodIds: number[]): Promise<number> {
+    console.log(foodIds);
     const deleteCount = await this.prisma.food.deleteMany({
       where: { id: { in: foodIds } },
     });
@@ -52,11 +78,18 @@ export class StorageRepository {
   }
 
   async updateFoodInfo(foodInfo: UpdateFoodDto): Promise<FoodDto> {
-    return this.prisma.food.update({
+    const foodUpdated = await this.prisma.food.update({
       where: { id: foodInfo.id },
       data: {
-        ...foodInfo,
+        storageType: foodInfo.storageType,
+        name: foodInfo.name,
+        class1: foodInfo.class1,
+        class2: foodInfo.class2,
+        icon: foodInfo.icon,
+        addedDate: foodInfo.addedDate,
+        expireDate: foodInfo.expireDate,
       },
     });
+    return this.calculateDaysTilExpire([foodUpdated])[0];
   }
 }

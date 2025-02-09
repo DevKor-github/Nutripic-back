@@ -25,6 +25,7 @@ import { StorageService } from './storage.service';
 import { UpdateFoodDto } from './dto/updateFood.dto';
 import { CreateFoodDto } from './dto/createFood.dto';
 import { FoodDto } from './dto/food.dto';
+import { DeleteFoodDto } from './dto/deleteFood.dto';
 
 @ApiTags('Storage')
 @ApiBearerAuth()
@@ -96,10 +97,10 @@ export class StorageController {
   @HttpCode(HttpStatus.OK)
   deleteFood(
     @User() userId: string,
-    @Body() foodIds: number[]
+    @Body() food: DeleteFoodDto
   ): Promise<number> {
-    this.logger.log(`Delete food`);
-    return this.storageService.deleteFood(userId, foodIds);
+    this.logger.log(`Delete food ${food.foodIds}`);
+    return this.storageService.deleteFood(userId, food.foodIds);
   }
 
   @ApiOperation({ summary: '식재료 정보 수정' })
