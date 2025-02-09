@@ -18,9 +18,8 @@ export class ImageToFoodRepository {
     const foodInfoMap = new Map<string, CreateFoodDto>();
     (await foodInfo).forEach(async (food) => {
       const currentDate = new Date();
-      const expireDate = new Date(
-        currentDate.setDate(currentDate.getDate() + food.expireDate)
-      );
+      const expireDate = new Date(currentDate);
+      expireDate.setDate(expireDate.getDate() + food.expireDate);
       foodInfoMap.set(food.class2, {
         name: food.class2,
         storageType: food.storageType,
