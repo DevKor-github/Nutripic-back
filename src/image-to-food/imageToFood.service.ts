@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 import { ImageToFoodRepository } from './imageToFood.repository';
 import { CreateFoodDto } from 'src/storage/dto/createFood.dto';
+import { ChatCompletionContentPart } from 'openai/resources';
 
 @Injectable()
 export class ImageToFoodService {
@@ -16,31 +17,38 @@ export class ImageToFoodService {
     });
   }
 
-  async analyzeImage(image: Express.Multer.File): Promise<CreateFoodDto[][]> {
+  async analyzeImage(
+    images: Express.Multer.File[]
+  ): Promise<CreateFoodDto[][]> {
     try {
-      const base64Image = image.buffer.toString('base64');
+      const base64Images = images.map((image) =>
+        image.buffer.toString('base64')
+      );
+
+      const content: ChatCompletionContentPart[] = [
+        {
+          type: 'text',
+          text: "What's in this image?",
+        },
+        {
+          type: 'text',
+          text: '모든 사진에 있는 식재료가 뭐가 있는지 하나의 리스트 형식으로 말해줘. 다른 텍스트는 필요없어.',
+        },
+      ];
+
+      base64Images.forEach((base64Image) => {
+        content.push({
+          type: 'image_url',
+          image_url: { url: `data:image/jpeg;base64,${base64Image}` },
+        });
+      });
 
       const completion = await this.openAi.chat.completions.create({
         model: 'gpt-4o',
         messages: [
           {
             role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: "What's in this image?",
-              },
-              {
-                type: 'text',
-                text: '이 안에 있는 식재료가 뭐가 있는지 리스트 형식으로 말해줘. 다른 텍스트는 필요없어.',
-              },
-              {
-                type: 'image_url',
-                image_url: {
-                  url: `data:image/jpeg;base64,${base64Image}`,
-                },
-              },
-            ],
+            content: content,
           },
         ],
         max_tokens: 300,
@@ -52,8 +60,9 @@ export class ImageToFoodService {
       const food_list = response_data
         .split('\n')
         .map((food) => food.replace('- ', ''));
-      //ex: ['감자', '토마토', '당근']
+      // ex: ['감자', '토마토', '당근']
 
+      console.log(response_data);
       const foodInfo =
         await this.imageToFoodRepository.matchFoodInfo(food_list);
       const foodInfoByStorage = [[], [], []];

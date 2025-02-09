@@ -4,16 +4,15 @@ import {
   HttpStatus,
   Logger,
   Post,
-  UploadedFile,
+  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
 import { ImageToFoodService } from './imageToFood.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { Public } from 'src/auth/auth.guard';
 import { CreateFoodDto } from 'src/storage/dto/createFood.dto';
 import {
   ApiBearerAuth,
-  ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -54,17 +53,17 @@ export class ImageToFoodController {
   })
   @Post('analyze')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(FileInterceptor('image'))
+  @UseInterceptors(FilesInterceptor('image', 5))
   async analyzeImage(
-    @UploadedFile() image: Express.Multer.File
+    @UploadedFiles() images: Array<Express.Multer.File>
   ): Promise<CreateFoodDto[][] | { message: string }> {
     this.logger.log(`Analyze image`);
-    if (!image) {
+    if (!images) {
       return {
         message: 'No image uploaded',
       };
     }
 
-    return this.imageToFoodService.analyzeImage(image);
+    return this.imageToFoodService.analyzeImage(images);
   }
 }
