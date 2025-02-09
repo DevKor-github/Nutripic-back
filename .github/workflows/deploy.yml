@@ -31,7 +31,7 @@ jobs:
           host: ${{ secrets.REMOTE_IP }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.REMOTE_PRIVATE_KEY }}
-          source: 'dist/, package.json, package-lock.json, ecosystem.config.js'
+          source: 'dist/, package.json, package-lock.json, ecosystem.config.js, prisma/schema.prisma'
           target: '/home/ec2-user/Nutripic-back'
 
       - name: remote ssh commands
@@ -44,4 +44,5 @@ jobs:
           script: |
             cd /home/ec2-user/Nutripic-back
             npm install
+            npm run prisma:dev db push
             pm2 restart ecosystem.config.js --env development
