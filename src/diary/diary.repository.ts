@@ -24,7 +24,8 @@ export class DiaryRepository {
           where: {
             userId: userId,
             date: {
-              equals: new Date(year, month, day),
+              gte: new Date(year, month, day, 9),
+              lt: new Date(year, month, day + 1, 9), // 해당 년월일에 생성된 다이어리
             },
             isDeleted: false,
           },
@@ -33,8 +34,8 @@ export class DiaryRepository {
           where: {
             userId: userId,
             date: {
-              gte: new Date(year, month, 1),
-              lt: new Date(year, month + 1, 1), // 해당 년월에 생성된 다이어리
+              gte: new Date(year, month, 1, 9),
+              lt: new Date(year, month + 1, 1, 9), // 해당 년월에 생성된 다이어리
             },
             isDeleted: false,
           },
@@ -45,6 +46,7 @@ export class DiaryRepository {
     userId: string,
     body: string,
     url: string,
+    mealTime: number,
     date: Date
   ): Promise<Diary> {
     return this.prisma.diary.create({
@@ -52,12 +54,13 @@ export class DiaryRepository {
         userId: userId,
         body: body,
         url: url,
+        mealTime: mealTime,
         date: date,
       },
     });
   }
 
-  async updateDiary(diaryId: number, body: string, date: Date): Promise<Diary> {
+  async updateDiary(diaryId: number, body: string, mealTime: number, date: Date): Promise<Diary> {
     return await this.prisma.diary.update({
       where: {
         id: diaryId,
@@ -65,6 +68,7 @@ export class DiaryRepository {
       data: {
         body: body,
         date: date,
+        mealTime: mealTime,
       },
     });
   }
@@ -93,3 +97,4 @@ export class DiaryRepository {
     });
   }
 }
+
