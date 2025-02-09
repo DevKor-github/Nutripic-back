@@ -53,7 +53,8 @@ model FoodInfo {
   class1    String @db.VarChar(255) //대분류
   class2    String @db.VarChar(255) @default("기타") //중분류
   storageType  StorageType @map("storage_type")
-  expireDate   Int?   @map("expire_date") //일 단위
+  expireDate   Int?   @map("expire_date") //일 
+  icon         String @db.VarChar(255) @default("null") //아이콘 분류
 
   @@map("food_info")
 }
