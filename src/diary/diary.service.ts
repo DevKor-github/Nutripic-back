@@ -60,13 +60,14 @@ export class DiaryService {
       targetMonth,
       day
     );
-    return diaries.map((diary) => ({
-      id: diary.id,
-      url: diary.url,
-      date: diary.date,
-    }));
-
-    return;
+    return diaries.map((diary) => 
+      ({
+        id: diary.id,
+        url: diary.url,
+        mealTime: diary.mealTime,
+        date: diary.date,
+      })
+    );
   }
 
   async getDiaryById(
@@ -84,6 +85,7 @@ export class DiaryService {
       id: diary.id,
       body: diary.body,
       url: diary.url,
+      mealTime: diary.mealTime,
       date: diary.date,
     };
   }
@@ -92,11 +94,12 @@ export class DiaryService {
     userId: string,
     createDiaryReqDto: CreateDiaryReqDto
   ): Promise<void> {
-    const { body, date, url } = createDiaryReqDto;
+    const { body, date, url, mealTime } = createDiaryReqDto;
     const diary = await this.diaryRepository.createDiary(
       userId,
       body,
       url,
+      mealTime,
       new Date(date)
     );
     if (!diary) throw new BadGatewayException('다이어리 생성에 실패했습니다.');
@@ -111,11 +114,12 @@ export class DiaryService {
     if (!diary)
       throw new NotFoundException('해당 ID의 다이어리가 존재하지 않습니다.');
 
-    const { body, date } = updateDiaryReqDto;
+    const { body, date, mealTime } = updateDiaryReqDto;
 
     const updatedDiary = await this.diaryRepository.updateDiary(
       diaryId,
       body,
+      mealTime,
       new Date(date)
     );
 
@@ -145,6 +149,8 @@ export class DiaryService {
       body: diary.body,
       url: diary.url,
       date: diary.date,
+      mealTime: diary.mealTime,
     };
   }
 }
+
