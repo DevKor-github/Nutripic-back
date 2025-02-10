@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateFoodDto } from './dto/updateFood.dto';
 import { CreateFoodDto } from './dto/createFood.dto';
 import { FoodDto } from './dto/food.dto';
+import { FoodInfoDto } from './dto/foodInfo.dto';
 
 @Injectable()
 export class StorageRepository {
@@ -91,5 +92,9 @@ export class StorageRepository {
       },
     });
     return this.calculateDaysTilExpire([foodUpdated])[0];
+  }
+
+  async getAllClasses(): Promise<FoodInfoDto[]> {
+    return this.prisma.foodInfo.findMany();
   }
 }

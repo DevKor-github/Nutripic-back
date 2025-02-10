@@ -9,6 +9,7 @@ import { StorageRepository } from './storage.repository';
 import { UpdateFoodDto } from './dto/updateFood.dto';
 import { CreateFoodDto } from './dto/createFood.dto';
 import { FoodDto } from './dto/food.dto';
+import { FoodInfoDto } from './dto/foodInfo.dto';
 
 @Injectable()
 export class StorageService {
@@ -83,5 +84,9 @@ export class StorageService {
     if (foodInfo.length != foodIds.length)
       throw new ForbiddenException('해당 식재료에 대한 접근 권한이 없습니다.');
     return true;
+  }
+
+  async getClasses(): Promise<FoodInfoDto[]> {
+    return this.storageRepository.getAllClasses();
   }
 }

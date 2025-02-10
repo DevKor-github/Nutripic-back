@@ -26,6 +26,8 @@ import { UpdateFoodDto } from './dto/updateFood.dto';
 import { CreateFoodDto } from './dto/createFood.dto';
 import { FoodDto } from './dto/food.dto';
 import { DeleteFoodDto } from './dto/deleteFood.dto';
+import { Public } from 'src/auth/auth.guard';
+import { FoodInfoDto } from './dto/foodInfo.dto';
 
 @ApiTags('Storage')
 @ApiBearerAuth()
@@ -136,5 +138,19 @@ export class StorageController {
   ): Promise<FoodDto> {
     this.logger.log(`Update food`);
     return this.storageService.updateFoodInfo(userId, food);
+  }
+
+  @ApiOperation({ summary: '식재료 정보 가져오기' })
+  @ApiOkResponse({
+    type: FoodInfoDto,
+    isArray: true,
+    description: '식재료 정보 반환 (storageType, 대분류, 소분류 등)',
+  })
+  @Get('/classes')
+  @HttpCode(HttpStatus.OK)
+  @Public()
+  getClasses(): Promise<FoodInfoDto[]> {
+    this.logger.log(`Get classes`);
+    return this.storageService.getClasses();
   }
 }
