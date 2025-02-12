@@ -25,6 +25,7 @@ export class ImageToFoodRepository {
         storageType: food.storageType,
         class1: food.class1,
         class2: food.class2,
+        icon: food.icon,
         addedDate: currentDate.toISOString(),
         expireDate: expireDate.toISOString(),
       });
@@ -39,6 +40,7 @@ export class ImageToFoodRepository {
           storageType: 'fridge',
           class1: '기타',
           class2: '기타',
+          icon: 'null',
           addedDate: new Date().toISOString(),
         };
       }
