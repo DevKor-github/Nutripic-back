@@ -21,47 +21,46 @@ export class ImageToFoodService {
     images: Express.Multer.File[]
   ): Promise<CreateFoodDto[][]> {
     try {
-      // const base64Images = images.map((image) =>
-      //   image.buffer.toString('base64')
-      // );
+      const base64Images = images.map((image) =>
+        image.buffer.toString('base64')
+      );
 
-      // const content: ChatCompletionContentPart[] = [
-      //   {
-      //     type: 'text',
-      //     text: "What's in this image?",
-      //   },
-      //   {
-      //     type: 'text',
-      //     text: '모든 사진에 있는 식재료가 뭐가 있는지 하나의 리스트 형식으로 말해줘. 다른 텍스트는 필요없어.',
-      //   },
-      // ];
+      const content: ChatCompletionContentPart[] = [
+        {
+          type: 'text',
+          text: "What's in this image?",
+        },
+        {
+          type: 'text',
+          text: '모든 사진에 있는 식재료가 뭐가 있는지 하나의 리스트 형식으로 말해줘. 다른 텍스트는 필요없어.',
+        },
+      ];
 
-      // base64Images.forEach((base64Image) => {
-      //   content.push({
-      //     type: 'image_url',
-      //     image_url: { url: `data:image/jpeg;base64,${base64Image}` },
-      //   });
-      // });
+      base64Images.forEach((base64Image) => {
+        content.push({
+          type: 'image_url',
+          image_url: { url: `data:image/jpeg;base64,${base64Image}` },
+        });
+      });
 
-      // const completion = await this.openAi.chat.completions.create({
-      //   model: 'gpt-4o',
-      //   messages: [
-      //     {
-      //       role: 'user',
-      //       content: content,
-      //     },
-      //   ],
-      //   max_tokens: 300,
-      // });
+      const completion = await this.openAi.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'user',
+            content: content,
+          },
+        ],
+        max_tokens: 300,
+      });
 
-      // const response_data = completion.choices[0].message.content;
-      // //ex: - 감자\n - 토마토\n - 당근
+      const response_data = completion.choices[0].message.content;
+      //ex: - 감자\n - 토마토\n - 당근
 
-      // const food_list = response_data
-      //   .split('\n')
-      //   .map((food) => food.replace('- ', ''));
-      // // ex: ['감자', '토마토', '당근']
-      const food_list = ['감자', '토마토', '당근'];
+      const food_list = response_data
+        .split('\n')
+        .map((food) => food.replace('- ', ''));
+      // ex: ['감자', '토마토', '당근']
 
       const foodInfo =
         await this.imageToFoodRepository.matchFoodInfo(food_list);
