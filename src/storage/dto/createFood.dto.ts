@@ -33,7 +33,7 @@ export class CreateFoodDto {
   @ApiProperty({ description: '중분류' })
   @IsString()
   @IsOptional()
-  class2?: string;
+  class2: string;
 
   @ApiProperty({ description: '표시 아이콘 URL' })
   @IsString()
