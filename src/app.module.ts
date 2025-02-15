@@ -14,6 +14,8 @@ import { DiaryModule } from './diary/diary.module';
 import { AwsModule } from './aws/aws.module';
 import { RecipeModule } from './recipe/recipe.module';
 import { ImageToFoodModule } from './image-to-food/imageToFood.module';
+import { WinstonModule } from 'nest-winston';
+import * as winston from 'winston';
 
 @Module({
   imports: [
@@ -30,6 +32,17 @@ import { ImageToFoodModule } from './image-to-food/imageToFood.module';
     AwsModule,
     RecipeModule,
     ImageToFoodModule,
+    WinstonModule.forRoot({
+      transports: [
+        new winston.transports.Console({
+          level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+          format: winston.format.combine(
+            winston.format.timestamp(),
+            winston.format.prettyPrint()
+          ),
+        }),
+      ],
+    }),
   ],
   controllers: [AppController],
   providers: [
