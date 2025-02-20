@@ -60,7 +60,7 @@ export class ImageToFoodController {
   })
   @Post('analyze')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(FilesInterceptor('image', 5))
+  @UseInterceptors(FilesInterceptor('image', 4))
   async analyzeImage(
     @UploadedFiles() images: Array<Express.Multer.File>
   ): Promise<CreateFoodDto[][] | { message: string }> {
