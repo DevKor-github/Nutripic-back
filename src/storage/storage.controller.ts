@@ -25,7 +25,7 @@ import { StorageService } from './storage.service';
 import { UpdateFoodDto } from './dto/updateFood.dto';
 import { CreateFoodDto } from './dto/createFood.dto';
 import { FoodDto } from './dto/food.dto';
-import { DeleteFoodDto } from './dto/deleteFood.dto';
+import { FoodIdsDto } from './dto/foodIds.dto';
 import { Public } from 'src/auth/auth.guard';
 import { FoodInfoDto } from './dto/foodInfo.dto';
 
@@ -72,7 +72,7 @@ export class StorageController {
   @Post('/addFoodById')
   addFoodById(
     @User() userId: string,
-    @Body() food: DeleteFoodDto
+    @Body() food: FoodIdsDto
   ): Promise<FoodDto[]> {
     this.logger.log(`Add food by id: ${food.foodIds}`);
     return this.storageService.addFoodsById(userId, food.foodIds);
@@ -109,7 +109,7 @@ export class StorageController {
   @HttpCode(HttpStatus.OK)
   deleteFood(
     @User() userId: string,
-    @Body() food: DeleteFoodDto
+    @Body() food: FoodIdsDto
   ): Promise<number> {
     this.logger.log(`Delete food ${food.foodIds}`);
     return this.storageService.deleteFood(userId, food.foodIds);
