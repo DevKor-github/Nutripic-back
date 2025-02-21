@@ -7,7 +7,7 @@ export class ImageToFoodRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   async matchFoodInfo(foodList: string[]): Promise<CreateFoodDto[]> {
-    const foodInfo = this.prismaService.foodInfo.findMany({
+    const foodInfo = await this.prismaService.foodInfo.findMany({
       where: {
         class2: {
           in: foodList,
@@ -16,7 +16,7 @@ export class ImageToFoodRepository {
     });
 
     const foodInfoMap = new Map<string, CreateFoodDto>();
-    (await foodInfo).forEach(async (food) => {
+    foodInfo.map((food) => {
       const currentDate = new Date();
       const expireDate = new Date(currentDate);
       expireDate.setDate(expireDate.getDate() + food.expireDate);
