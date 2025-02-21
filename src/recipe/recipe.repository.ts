@@ -75,7 +75,7 @@ export class RecipeRepository {
           ? { difficulty: recipeFilter.difficulty }
           : {}),
         ...(recipeFilter.cookingTime
-          ? { cookingTime: recipeFilter.cookingTime }
+          ? { cookingTime: { lte: recipeFilter.cookingTime } }
           : {}),
       },
       include: {
