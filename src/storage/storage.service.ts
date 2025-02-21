@@ -18,11 +18,13 @@ export class StorageService {
   //식재료 추가
   async createFoods(
     userId: string,
-    Foods: CreateFoodDto[]
+    foods: CreateFoodDto[]
   ): Promise<FoodDto[]> {
-    //TODO: 식재료 유통기한 정보 추가
+    return this.storageRepository.createFoods(userId, foods);
+  }
 
-    return this.storageRepository.createFoods(userId, Foods);
+  async addFoodsById(userId: string, foodIds: number[]): Promise<FoodDto[]> {
+    return this.storageRepository.createFoodsById(userId, foodIds);
   }
 
   //내 식재료 가져오기

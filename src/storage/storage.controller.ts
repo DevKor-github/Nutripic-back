@@ -68,6 +68,16 @@ export class StorageController {
     return this.storageService.createFoods(userId, foods);
   }
 
+  @ApiOperation({ summary: '식재료 정보 ID로 식재료 추가' })
+  @Post('/addFoodById')
+  addFoodById(
+    @User() userId: string,
+    @Body() food: DeleteFoodDto
+  ): Promise<FoodDto[]> {
+    this.logger.log(`Add food by id: ${food.foodIds}`);
+    return this.storageService.addFoodsById(userId, food.foodIds);
+  }
+
   //식재료 삭제하기
   @ApiOperation({ summary: '식재료 삭제' })
   @ApiBody({
