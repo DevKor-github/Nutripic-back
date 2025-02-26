@@ -8,6 +8,7 @@ import {
   Logger,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
@@ -22,8 +23,10 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+import { Public } from 'src/auth/auth.guard';
 
 @ApiTags('Recipe')
 @ApiBearerAuth()
@@ -115,6 +118,25 @@ export class RecipeController {
   getRecipeDetail(@Param('id') recipeId: number): Promise<RecipeDto> {
     this.logger.log(`Get recipe detail of ${recipeId}`);
     return this.recipeService.viewRecipeDetails(recipeId);
+  }
+
+  @ApiOperation({ summary: '레시피 검색' })
+  @ApiQuery({
+    name: 'keyword',
+    type: String,
+    description: '레시피 이름 검색 키워드',
+  })
+  @ApiOkResponse({
+    type: RecipePreviewDto,
+    isArray: true,
+    description: '검색된 레시피 리스트',
+  })
+  @Get('search')
+  @HttpCode(HttpStatus.OK)
+  searchRecipe(@Query('keyword') keyword: string): Promise<RecipePreviewDto[]> {
+    this.logger.log(`Search recipe by keyword: ${keyword}`);
+    if (!keyword) return this.recipeService.getRecipePreviews([]);
+    return this.recipeService.searchRecipe(keyword);
   }
 
   //레시피 북마크 추가

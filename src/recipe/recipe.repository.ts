@@ -132,6 +132,22 @@ export class RecipeRepository {
     });
   }
 
+  async searchRecipe(keyword: string): Promise<RecipePreviewDto[]> {
+    return this.prisma.recipe.findMany({
+      where: {
+        name: { contains: keyword },
+      },
+      include: {
+        ingredient: {
+          select: {
+            ingredientName: true,
+            amount: true,
+          },
+        },
+      },
+    });
+  }
+
   async addBookmark(userId: string, recipeId: number): Promise<number> {
     const bookmark = await this.prisma.recipeBookmark.create({
       data: { userId, recipeId },

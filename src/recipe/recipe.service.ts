@@ -120,6 +120,11 @@ export class RecipeService {
     return recipeInfo;
   }
 
+  async searchRecipe(keyword: string): Promise<RecipePreviewDto[]> {
+    const previews = await this.recipeRepository.searchRecipe(keyword);
+    return this.processProcedure(previews);
+  }
+
   //북마크 관련 기능
   async addRecipeBookmark(userId: string, recipeId: number): Promise<number> {
     return this.recipeRepository.addBookmark(userId, recipeId);
