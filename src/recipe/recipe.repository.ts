@@ -56,7 +56,6 @@ export class RecipeRepository {
       )
       SELECT * 
       FROM recipe_with_missing
-      WHERE missing_ingredients <= ${requiredIngredients}
       ORDER BY missing_ingredients ASC;
     `;
     const result: number[][] = rawRecipeInfo.map((info) => [
