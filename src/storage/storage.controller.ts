@@ -70,7 +70,7 @@ export class StorageController {
 
   @ApiOperation({ summary: '식재료 정보 ID로 식재료 추가' })
   @ApiBody({ type: FoodIdsDto, description: '추가할 식재료 정보 ID 리스트' })
-  @Post('/addFoodById')
+  @Post('/add-by-id')
   addFoodById(
     @User() userId: string,
     @Body() food: FoodIdsDto
