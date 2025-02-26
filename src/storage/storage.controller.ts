@@ -69,6 +69,7 @@ export class StorageController {
   }
 
   @ApiOperation({ summary: '식재료 정보 ID로 식재료 추가' })
+  @ApiBody({ type: FoodIdsDto, description: '추가할 식재료 정보 ID 리스트' })
   @Post('/addFoodById')
   addFoodById(
     @User() userId: string,
@@ -81,8 +82,7 @@ export class StorageController {
   //식재료 삭제하기
   @ApiOperation({ summary: '식재료 삭제' })
   @ApiBody({
-    type: Number,
-    isArray: true,
+    type: FoodIdsDto,
     description: '삭제할 식재료 ID',
   })
   @ApiOkResponse({
