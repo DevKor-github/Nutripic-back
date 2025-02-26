@@ -182,6 +182,7 @@ export class StorageController {
   @Public()
   searchFoodInfo(@Query('keyword') keyword: string): Promise<FoodInfoDto[]> {
     this.logger.log(`Search food info by keyword: ${keyword}`);
+    if (!keyword.trim()) return Promise.resolve([]);
     return this.storageService.searchFoodInfo(keyword);
   }
 }
