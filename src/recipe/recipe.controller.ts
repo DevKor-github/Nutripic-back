@@ -120,7 +120,7 @@ export class RecipeController {
     return this.recipeService.viewRecipeDetails(recipeId);
   }
 
-  @ApiOperation({ summary: '레시피 검색' })
+  @ApiOperation({ summary: '레시피 이름 검색' })
   @ApiQuery({
     name: 'keyword',
     type: String,
@@ -135,7 +135,7 @@ export class RecipeController {
   @HttpCode(HttpStatus.OK)
   searchRecipe(@Query('keyword') keyword: string): Promise<RecipePreviewDto[]> {
     this.logger.log(`Search recipe by keyword: ${keyword}`);
-    if (!keyword) return this.recipeService.getRecipePreviews([]);
+    if (!keyword.trim()) return Promise.resolve([]);
     return this.recipeService.searchRecipe(keyword);
   }
 

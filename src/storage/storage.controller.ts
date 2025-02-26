@@ -18,6 +18,7 @@ import {
   ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -165,7 +166,20 @@ export class StorageController {
     return this.storageService.getClasses();
   }
 
-  @Get('/search?=keyword')
+  @ApiOperation({ summary: '식재료 정보 검색' })
+  @ApiQuery({
+    name: 'keyword',
+    type: String,
+    description: '식재료 정보 검색 키워드 (class2)',
+  })
+  @ApiOkResponse({
+    type: FoodInfoDto,
+    isArray: true,
+    description: '검색된 식재료 정보 리스트',
+  })
+  @Get('search')
+  @HttpCode(HttpStatus.OK)
+  @Public()
   searchFoodInfo(@Query('keyword') keyword: string): Promise<FoodInfoDto[]> {
     this.logger.log(`Search food info by keyword: ${keyword}`);
     return this.storageService.searchFoodInfo(keyword);
