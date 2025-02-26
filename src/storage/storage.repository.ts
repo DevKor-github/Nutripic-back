@@ -116,4 +116,12 @@ export class StorageRepository {
   async getAllClasses(): Promise<FoodInfoDto[]> {
     return this.prisma.foodInfo.findMany();
   }
+
+  async searchFoodInfo(keyword: string): Promise<FoodInfoDto[]> {
+    return this.prisma.foodInfo.findMany({
+      where: {
+        class2: { contains: keyword },
+      },
+    });
+  }
 }

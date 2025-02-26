@@ -8,6 +8,7 @@ import {
   Logger,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBadGatewayResponse,
@@ -162,5 +163,11 @@ export class StorageController {
   getClasses(): Promise<FoodInfoDto[]> {
     this.logger.log(`Get classes`);
     return this.storageService.getClasses();
+  }
+
+  @Get('/search?=keyword')
+  searchFoodInfo(@Query('keyword') keyword: string): Promise<FoodInfoDto[]> {
+    this.logger.log(`Search food info by keyword: ${keyword}`);
+    return this.storageService.searchFoodInfo(keyword);
   }
 }

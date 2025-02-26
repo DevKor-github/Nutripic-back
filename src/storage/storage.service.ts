@@ -91,4 +91,8 @@ export class StorageService {
   async getClasses(): Promise<FoodInfoDto[]> {
     return this.storageRepository.getAllClasses();
   }
+
+  async searchFoodInfo(keyword: string): Promise<FoodInfoDto[]> {
+    return this.storageRepository.searchFoodInfo(keyword);
+  }
 }
