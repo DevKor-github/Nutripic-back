@@ -5,6 +5,7 @@ import { UpdateFoodDto } from './dto/updateFood.dto';
 import { CreateFoodDto } from './dto/createFood.dto';
 import { FoodDto } from './dto/food.dto';
 import { FoodInfoDto } from './dto/foodInfo.dto';
+import { FoodSearchDto } from './dto/foodSearch.dto';
 
 @Injectable()
 export class StorageRepository {
@@ -117,11 +118,12 @@ export class StorageRepository {
     return this.prisma.foodInfo.findMany();
   }
 
-  async searchFoodInfo(keyword: string): Promise<FoodInfoDto[]> {
+  async searchFoodInfo(keyword: string): Promise<FoodSearchDto[]> {
     return this.prisma.foodInfo.findMany({
       where: {
         class2: { contains: keyword },
       },
+      select: { id: true, class1: true, class2: true },
     });
   }
 }

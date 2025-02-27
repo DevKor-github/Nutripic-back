@@ -30,6 +30,7 @@ import { FoodDto } from './dto/food.dto';
 import { FoodIdsDto } from './dto/foodIds.dto';
 import { Public } from 'src/auth/auth.guard';
 import { FoodInfoDto } from './dto/foodInfo.dto';
+import { FoodSearchDto } from './dto/foodSearch.dto';
 
 @ApiTags('Storage')
 @ApiBearerAuth()
@@ -173,14 +174,14 @@ export class StorageController {
     description: '식재료 정보 검색 키워드 (class2)',
   })
   @ApiOkResponse({
-    type: FoodInfoDto,
+    type: FoodSearchDto,
     isArray: true,
     description: '검색된 식재료 정보 리스트',
   })
   @Get('search')
   @HttpCode(HttpStatus.OK)
   @Public()
-  searchFoodInfo(@Query('keyword') keyword: string): Promise<FoodInfoDto[]> {
+  searchFoodInfo(@Query('keyword') keyword: string): Promise<FoodSearchDto[]> {
     this.logger.log(`Search food info by keyword: ${keyword}`);
     if (!keyword.trim()) return Promise.resolve([]);
     return this.storageService.searchFoodInfo(keyword);
