@@ -91,9 +91,9 @@ export class StorageRepository {
   }
 
   async deleteManyFoods(foodIds: number[]): Promise<number> {
-    console.log(foodIds);
-    const deleteCount = await this.prisma.food.deleteMany({
+    const deleteCount = await this.prisma.food.updateMany({
       where: { id: { in: foodIds } },
+      data: { deletedAt: new Date().toISOString() },
     });
     return deleteCount.count;
   }
@@ -125,5 +125,14 @@ export class StorageRepository {
       },
       select: { id: true, class1: true, class2: true },
     });
+  }
+
+  async findRecentFoods(userId: string): Promise<FoodDto[]> {
+    const foods = await this.prisma.food.findMany({
+      where: { userId },
+      orderBy: { deletedAt: 'desc' },
+      take: 5,
+    });
+    return this.calculateDaysTilExpire(foods);
   }
 }
