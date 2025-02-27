@@ -40,10 +40,12 @@ export class RecipeController {
   @ApiOkResponse({
     type: Number,
     isArray: true,
-    description: '[[만들 수 있는 레시피 id], [식재료 추가 필요한 레시피 id]]',
+    description:
+      '[[만들 수 있는 레시피 id], [식재료 추가 필요한 레시피 id], [현재 가진 식재료를 사용하는 레시피 id]]',
     example: [
       [1, 2, 3],
       [4, 5],
+      [6, 7, 8],
     ],
   })
   @Get('/recommended')
