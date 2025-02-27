@@ -178,7 +178,7 @@ export class StorageController {
     isArray: true,
     description: '검색된 식재료 정보 리스트',
   })
-  @Get('search')
+  @Get('/search')
   @HttpCode(HttpStatus.OK)
   @Public()
   searchFoodInfo(@Query('keyword') keyword: string): Promise<FoodSearchDto[]> {

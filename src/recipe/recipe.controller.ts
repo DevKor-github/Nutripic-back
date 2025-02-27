@@ -46,7 +46,7 @@ export class RecipeController {
       [4, 5],
     ],
   })
-  @Get('recommended')
+  @Get('/recommended')
   @HttpCode(HttpStatus.OK)
   getRecommendedRecipe(@User() userId: string): Promise<number[][]> {
     this.logger.log(`Get recommended recipe by user: ${userId}`);
@@ -72,7 +72,7 @@ export class RecipeController {
     isArray: true,
     description: '레시피 프리뷰 리스트',
   })
-  @Get('previews')
+  @Get('/previews')
   @HttpCode(HttpStatus.OK)
   getRecipePreviews(
     @Body('recipeIds') recipeIds: number[]
@@ -93,7 +93,7 @@ export class RecipeController {
     isArray: true,
     description: '레시피 프리뷰 리스트',
   })
-  @Get('filter')
+  @Get('/filter')
   @HttpCode(HttpStatus.OK)
   getFilteredRecipe(
     @Body() recipeFilter: RecipeFilterDto
@@ -114,7 +114,7 @@ export class RecipeController {
     type: RecipeDto,
     description: '레시피 상세 정보',
   })
-  @Get('detail/:id')
+  @Get('/detail/:id')
   @HttpCode(HttpStatus.OK)
   getRecipeDetail(@Param('id') recipeId: number): Promise<RecipeDto> {
     this.logger.log(`Get recipe detail of ${recipeId}`);
@@ -132,7 +132,7 @@ export class RecipeController {
     isArray: true,
     description: '검색된 레시피 리스트',
   })
-  @Get('search')
+  @Get('/search')
   @HttpCode(HttpStatus.OK)
   searchRecipe(@Query('keyword') keyword: string): Promise<RecipeSearchDto[]> {
     this.logger.log(`Search recipe by keyword: ${keyword}`);
@@ -157,7 +157,7 @@ export class RecipeController {
     description: '북마크 레시피 ID',
     example: 1,
   })
-  @Post('bookmark/add')
+  @Post('/bookmark/add')
   @HttpCode(HttpStatus.CREATED)
   addRecipeBookmark(
     @User() userId: string,
@@ -173,7 +173,7 @@ export class RecipeController {
     isArray: true,
     description: '북마크 레시피 리스트',
   })
-  @Get('bookmark/view')
+  @Get('/bookmark/view')
   @HttpCode(HttpStatus.OK)
   viewRecipeBookmark(@User() userId): Promise<RecipePreviewDto[]> {
     this.logger.log(`View my bookmark`);
@@ -196,7 +196,7 @@ export class RecipeController {
     description: '삭제된 북마크 레시피 ID',
     example: 1,
   })
-  @Delete('bookmark/delete')
+  @Delete('/bookmark/delete')
   @HttpCode(HttpStatus.OK)
   deleteRecipeBookmark(
     @User() userId,
