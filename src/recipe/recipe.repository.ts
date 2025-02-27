@@ -5,6 +5,7 @@ import { RecipePreviewDto } from './dto/recipePreview.dto';
 import { plainToInstance } from 'class-transformer';
 import { RecipeFilterDto } from './dto/recipeFilter.dto';
 import { Prisma } from '@prisma/client';
+import { RecipeSearchDto } from './dto/recipeSearch.dto';
 
 @Injectable()
 export class RecipeRepository {
@@ -132,19 +133,12 @@ export class RecipeRepository {
     });
   }
 
-  async searchRecipe(keyword: string): Promise<RecipePreviewDto[]> {
+  async searchRecipe(keyword: string): Promise<RecipeSearchDto[]> {
     return this.prisma.recipe.findMany({
       where: {
         name: { contains: keyword },
       },
-      include: {
-        ingredient: {
-          select: {
-            ingredientName: true,
-            amount: true,
-          },
-        },
-      },
+      select: { id: true, name: true },
     });
   }
 

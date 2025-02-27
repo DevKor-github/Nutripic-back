@@ -27,6 +27,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Public } from 'src/auth/auth.guard';
+import { RecipeSearchDto } from './dto/recipeSearch.dto';
 
 @ApiTags('Recipe')
 @ApiBearerAuth()
@@ -127,13 +128,13 @@ export class RecipeController {
     description: '레시피 이름 검색 키워드',
   })
   @ApiOkResponse({
-    type: RecipePreviewDto,
+    type: RecipeSearchDto,
     isArray: true,
     description: '검색된 레시피 리스트',
   })
   @Get('search')
   @HttpCode(HttpStatus.OK)
-  searchRecipe(@Query('keyword') keyword: string): Promise<RecipePreviewDto[]> {
+  searchRecipe(@Query('keyword') keyword: string): Promise<RecipeSearchDto[]> {
     this.logger.log(`Search recipe by keyword: ${keyword}`);
     if (!keyword.trim()) return Promise.resolve([]);
     return this.recipeService.searchRecipe(keyword);

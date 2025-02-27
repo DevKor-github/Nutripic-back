@@ -4,6 +4,7 @@ import { RecipeDto } from './dto/recipe.dto';
 import { ingredientDto } from './dto/ingredient.dto';
 import { RecipePreviewDto } from './dto/recipePreview.dto';
 import { RecipeFilterDto } from './dto/recipeFilter.dto';
+import { RecipeSearchDto } from './dto/recipeSearch.dto';
 
 @Injectable()
 export class RecipeService {
@@ -120,9 +121,8 @@ export class RecipeService {
     return recipeInfo;
   }
 
-  async searchRecipe(keyword: string): Promise<RecipePreviewDto[]> {
-    const previews = await this.recipeRepository.searchRecipe(keyword);
-    return this.processProcedure(previews);
+  async searchRecipe(keyword: string): Promise<RecipeSearchDto[]> {
+    return this.recipeRepository.searchRecipe(keyword);
   }
 
   //북마크 관련 기능
