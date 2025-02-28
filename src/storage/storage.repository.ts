@@ -5,6 +5,7 @@ import { UpdateFoodDto } from './dto/updateFood.dto';
 import { CreateFoodDto } from './dto/createFood.dto';
 import { FoodDto } from './dto/food.dto';
 import { FoodInfoDto } from './dto/foodInfo.dto';
+import { FoodSearchDto } from './dto/foodSearch.dto';
 
 @Injectable()
 export class StorageRepository {
@@ -36,7 +37,7 @@ export class StorageRepository {
     storageType: StorageType
   ): Promise<FoodDto[]> {
     const foodsInStorage = await this.prisma.food.findMany({
-      where: { userId, storageType },
+      where: { userId, storageType, deletedAt: null },
     });
     return this.calculateDaysTilExpire(foodsInStorage);
   }
@@ -59,6 +60,25 @@ export class StorageRepository {
     return this.calculateDaysTilExpire([foodFound])[0];
   }
 
+  async createFoodsById(userId: string, foodIds: number[]): Promise<FoodDto[]> {
+    const foodData = await this.prisma.foodInfo.findMany({
+      where: {
+        id: { in: foodIds },
+      },
+    });
+    const createFoodData = foodData.map((food) => {
+      const currentDate = new Date();
+      const expireDate = new Date(currentDate);
+      expireDate.setDate(expireDate.getDate() + food.expireDate);
+      return { ...food, name: food.class2, expireDate, userId };
+    });
+
+    const createdData = await this.prisma.food.createManyAndReturn({
+      data: createFoodData,
+    });
+    return this.calculateDaysTilExpire(createdData);
+  }
+
   async findFoodsWithOwner(
     userId: string,
     foodIds: number[]
@@ -71,9 +91,9 @@ export class StorageRepository {
   }
 
   async deleteManyFoods(foodIds: number[]): Promise<number> {
-    console.log(foodIds);
-    const deleteCount = await this.prisma.food.deleteMany({
+    const deleteCount = await this.prisma.food.updateMany({
       where: { id: { in: foodIds } },
+      data: { deletedAt: new Date().toISOString() },
     });
     return deleteCount.count;
   }
@@ -96,5 +116,23 @@ export class StorageRepository {
 
   async getAllClasses(): Promise<FoodInfoDto[]> {
     return this.prisma.foodInfo.findMany();
+  }
+
+  async searchFoodInfo(keyword: string): Promise<FoodSearchDto[]> {
+    return this.prisma.foodInfo.findMany({
+      where: {
+        class2: { contains: keyword },
+      },
+      select: { id: true, class1: true, class2: true },
+    });
+  }
+
+  async findRecentFoods(userId: string): Promise<FoodDto[]> {
+    const foods = await this.prisma.food.findMany({
+      where: { userId },
+      orderBy: { deletedAt: 'desc' },
+      take: 5,
+    });
+    return this.calculateDaysTilExpire(foods);
   }
 }

@@ -8,6 +8,7 @@ import {
   Logger,
   Param,
   Post,
+  Query,
 } from '@nestjs/common';
 import { RecipeService } from './recipe.service';
 import { User } from 'src/utils/decorator/user.decorator';
@@ -21,8 +22,11 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
+import { Public } from 'src/auth/auth.guard';
+import { RecipeSearchDto } from './dto/recipeSearch.dto';
 
 @ApiTags('Recipe')
 @ApiBearerAuth()
@@ -35,13 +39,15 @@ export class RecipeController {
   @ApiOkResponse({
     type: Number,
     isArray: true,
-    description: '[[만들 수 있는 레시피 id], [식재료 추가 필요한 레시피 id]]',
+    description:
+      '[[만들 수 있는 레시피 id], [식재료 추가 필요한 레시피 id], [현재 가진 식재료를 사용하는 레시피 id]]',
     example: [
       [1, 2, 3],
       [4, 5],
+      [6, 7, 8],
     ],
   })
-  @Get('recommended')
+  @Get('/recommended')
   @HttpCode(HttpStatus.OK)
   getRecommendedRecipe(@User() userId: string): Promise<number[][]> {
     this.logger.log(`Get recommended recipe by user: ${userId}`);
@@ -67,7 +73,7 @@ export class RecipeController {
     isArray: true,
     description: '레시피 프리뷰 리스트',
   })
-  @Get('previews')
+  @Get('/previews')
   @HttpCode(HttpStatus.OK)
   getRecipePreviews(
     @Body('recipeIds') recipeIds: number[]
@@ -88,7 +94,7 @@ export class RecipeController {
     isArray: true,
     description: '레시피 프리뷰 리스트',
   })
-  @Get('filter')
+  @Get('/filter')
   @HttpCode(HttpStatus.OK)
   getFilteredRecipe(
     @Body() recipeFilter: RecipeFilterDto
@@ -109,11 +115,30 @@ export class RecipeController {
     type: RecipeDto,
     description: '레시피 상세 정보',
   })
-  @Get('detail/:id')
+  @Get('/detail/:id')
   @HttpCode(HttpStatus.OK)
   getRecipeDetail(@Param('id') recipeId: number): Promise<RecipeDto> {
     this.logger.log(`Get recipe detail of ${recipeId}`);
     return this.recipeService.viewRecipeDetails(recipeId);
+  }
+
+  @ApiOperation({ summary: '레시피 이름 검색' })
+  @ApiQuery({
+    name: 'keyword',
+    type: String,
+    description: '레시피 이름 검색 키워드',
+  })
+  @ApiOkResponse({
+    type: RecipeSearchDto,
+    isArray: true,
+    description: '검색된 레시피 리스트',
+  })
+  @Get('/search')
+  @HttpCode(HttpStatus.OK)
+  searchRecipe(@Query('keyword') keyword: string): Promise<RecipeSearchDto[]> {
+    this.logger.log(`Search recipe by keyword: ${keyword}`);
+    if (!keyword.trim()) return Promise.resolve([]);
+    return this.recipeService.searchRecipe(keyword);
   }
 
   //레시피 북마크 추가
@@ -133,7 +158,7 @@ export class RecipeController {
     description: '북마크 레시피 ID',
     example: 1,
   })
-  @Post('bookmark/add')
+  @Post('/bookmark/add')
   @HttpCode(HttpStatus.CREATED)
   addRecipeBookmark(
     @User() userId: string,
@@ -149,7 +174,7 @@ export class RecipeController {
     isArray: true,
     description: '북마크 레시피 리스트',
   })
-  @Get('bookmark/view')
+  @Get('/bookmark/view')
   @HttpCode(HttpStatus.OK)
   viewRecipeBookmark(@User() userId): Promise<RecipePreviewDto[]> {
     this.logger.log(`View my bookmark`);
@@ -172,7 +197,7 @@ export class RecipeController {
     description: '삭제된 북마크 레시피 ID',
     example: 1,
   })
-  @Delete('bookmark/delete')
+  @Delete('/bookmark/delete')
   @HttpCode(HttpStatus.OK)
   deleteRecipeBookmark(
     @User() userId,

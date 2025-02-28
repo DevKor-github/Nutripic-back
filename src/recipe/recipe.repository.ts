@@ -5,6 +5,7 @@ import { RecipePreviewDto } from './dto/recipePreview.dto';
 import { plainToInstance } from 'class-transformer';
 import { RecipeFilterDto } from './dto/recipeFilter.dto';
 import { Prisma } from '@prisma/client';
+import { RecipeSearchDto } from './dto/recipeSearch.dto';
 
 @Injectable()
 export class RecipeRepository {
@@ -56,7 +57,6 @@ export class RecipeRepository {
       )
       SELECT * 
       FROM recipe_with_missing
-      WHERE missing_ingredients <= ${requiredIngredients}
       ORDER BY missing_ingredients ASC;
     `;
     const result: number[][] = rawRecipeInfo.map((info) => [
@@ -75,7 +75,7 @@ export class RecipeRepository {
           ? { difficulty: recipeFilter.difficulty }
           : {}),
         ...(recipeFilter.cookingTime
-          ? { cookingTime: recipeFilter.cookingTime }
+          ? { cookingTime: { lte: recipeFilter.cookingTime } }
           : {}),
       },
       include: {
@@ -130,6 +130,15 @@ export class RecipeRepository {
           },
         },
       },
+    });
+  }
+
+  async searchRecipe(keyword: string): Promise<RecipeSearchDto[]> {
+    return this.prisma.recipe.findMany({
+      where: {
+        name: { contains: keyword },
+      },
+      select: { id: true, name: true },
     });
   }
 

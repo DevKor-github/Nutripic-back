@@ -10,6 +10,7 @@ import { UpdateFoodDto } from './dto/updateFood.dto';
 import { CreateFoodDto } from './dto/createFood.dto';
 import { FoodDto } from './dto/food.dto';
 import { FoodInfoDto } from './dto/foodInfo.dto';
+import { FoodSearchDto } from './dto/foodSearch.dto';
 
 @Injectable()
 export class StorageService {
@@ -18,11 +19,13 @@ export class StorageService {
   //식재료 추가
   async createFoods(
     userId: string,
-    Foods: CreateFoodDto[]
+    foods: CreateFoodDto[]
   ): Promise<FoodDto[]> {
-    //TODO: 식재료 유통기한 정보 추가
+    return this.storageRepository.createFoods(userId, foods);
+  }
 
-    return this.storageRepository.createFoods(userId, Foods);
+  async addFoodsById(userId: string, foodIds: number[]): Promise<FoodDto[]> {
+    return this.storageRepository.createFoodsById(userId, foodIds);
   }
 
   //내 식재료 가져오기
@@ -88,5 +91,13 @@ export class StorageService {
 
   async getClasses(): Promise<FoodInfoDto[]> {
     return this.storageRepository.getAllClasses();
+  }
+
+  async searchFoodInfo(keyword: string): Promise<FoodSearchDto[]> {
+    return this.storageRepository.searchFoodInfo(keyword);
+  }
+
+  async findRecentFoods(userId: string): Promise<FoodDto[]> {
+    return this.storageRepository.findRecentFoods(userId);
   }
 }
