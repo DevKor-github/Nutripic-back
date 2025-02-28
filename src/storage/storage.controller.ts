@@ -8,6 +8,7 @@ import {
   Logger,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBadGatewayResponse,
@@ -17,6 +18,7 @@ import {
   ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -25,7 +27,10 @@ import { StorageService } from './storage.service';
 import { UpdateFoodDto } from './dto/updateFood.dto';
 import { CreateFoodDto } from './dto/createFood.dto';
 import { FoodDto } from './dto/food.dto';
-import { DeleteFoodDto } from './dto/deleteFood.dto';
+import { FoodIdsDto } from './dto/foodIds.dto';
+import { Public } from 'src/auth/auth.guard';
+import { FoodInfoDto } from './dto/foodInfo.dto';
+import { FoodSearchDto } from './dto/foodSearch.dto';
 
 @ApiTags('Storage')
 @ApiBearerAuth()
@@ -66,11 +71,21 @@ export class StorageController {
     return this.storageService.createFoods(userId, foods);
   }
 
+  @ApiOperation({ summary: '식재료 정보 ID로 식재료 추가' })
+  @ApiBody({ type: FoodIdsDto, description: '추가할 식재료 정보 ID 리스트' })
+  @Post('/add-by-id')
+  addFoodById(
+    @User() userId: string,
+    @Body() food: FoodIdsDto
+  ): Promise<FoodDto[]> {
+    this.logger.log(`Add food by id: ${food.foodIds}`);
+    return this.storageService.addFoodsById(userId, food.foodIds);
+  }
+
   //식재료 삭제하기
   @ApiOperation({ summary: '식재료 삭제' })
   @ApiBody({
-    type: Number,
-    isArray: true,
+    type: FoodIdsDto,
     description: '삭제할 식재료 ID',
   })
   @ApiOkResponse({
@@ -97,7 +112,7 @@ export class StorageController {
   @HttpCode(HttpStatus.OK)
   deleteFood(
     @User() userId: string,
-    @Body() food: DeleteFoodDto
+    @Body() food: FoodIdsDto
   ): Promise<number> {
     this.logger.log(`Delete food ${food.foodIds}`);
     return this.storageService.deleteFood(userId, food.foodIds);
@@ -136,5 +151,51 @@ export class StorageController {
   ): Promise<FoodDto> {
     this.logger.log(`Update food`);
     return this.storageService.updateFoodInfo(userId, food);
+  }
+
+  @ApiOperation({ summary: '식재료 정보 가져오기' })
+  @ApiOkResponse({
+    type: FoodInfoDto,
+    isArray: true,
+    description: '식재료 정보 반환 (storageType, 대분류, 소분류 등)',
+  })
+  @Get('/classes')
+  @HttpCode(HttpStatus.OK)
+  @Public()
+  getClasses(): Promise<FoodInfoDto[]> {
+    this.logger.log(`Get classes`);
+    return this.storageService.getClasses();
+  }
+
+  @ApiOperation({ summary: '식재료 정보 검색' })
+  @ApiQuery({
+    name: 'keyword',
+    type: String,
+    description: '식재료 정보 검색 키워드 (class2)',
+  })
+  @ApiOkResponse({
+    type: FoodSearchDto,
+    isArray: true,
+    description: '검색된 식재료 정보 리스트',
+  })
+  @Get('/search')
+  @HttpCode(HttpStatus.OK)
+  @Public()
+  searchFoodInfo(@Query('keyword') keyword: string): Promise<FoodSearchDto[]> {
+    this.logger.log(`Search food info by keyword: ${keyword}`);
+    if (!keyword.trim()) return Promise.resolve([]);
+    return this.storageService.searchFoodInfo(keyword);
+  }
+
+  @ApiOperation({ summary: '최근 사용한 식재료 가져오기' })
+  @ApiOkResponse({
+    type: FoodDto,
+    isArray: true,
+    description: '최근 사용한 식재료 목록 반환',
+  })
+  @Get('/recent')
+  @HttpCode(HttpStatus.OK)
+  getRecentFoods(@User() userId: string): Promise<FoodDto[]> {
+    return this.storageService.findRecentFoods(userId);
   }
 }
