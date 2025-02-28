@@ -37,7 +37,7 @@ export class StorageRepository {
     storageType: StorageType
   ): Promise<FoodDto[]> {
     const foodsInStorage = await this.prisma.food.findMany({
-      where: { userId, storageType },
+      where: { userId, storageType, deletedAt: null },
     });
     return this.calculateDaysTilExpire(foodsInStorage);
   }
