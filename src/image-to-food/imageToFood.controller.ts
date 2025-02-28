@@ -13,6 +13,8 @@ import { Public } from 'src/auth/auth.guard';
 import { CreateFoodDto } from 'src/storage/dto/createFood.dto';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -26,6 +28,11 @@ export class ImageToFoodController {
   private logger: Logger = new Logger(ImageToFoodController.name);
 
   @ApiOperation({ summary: '이미지를 분석하여 식재료 리스트 추출' })
+  @ApiBody({
+    type: 'multipart/form-data',
+    description: '이미지 파일, 최대 4개 (key: image)',
+  })
+  @ApiConsumes('multipart/form-data')
   @ApiOkResponse({
     type: CreateFoodDto,
     isArray: true,
@@ -53,7 +60,7 @@ export class ImageToFoodController {
   })
   @Post('analyze')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(FilesInterceptor('image', 5))
+  @UseInterceptors(FilesInterceptor('image', 4))
   async analyzeImage(
     @UploadedFiles() images: Array<Express.Multer.File>
   ): Promise<CreateFoodDto[][] | { message: string }> {

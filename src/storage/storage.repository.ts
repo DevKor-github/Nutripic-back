@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateFoodDto } from './dto/updateFood.dto';
 import { CreateFoodDto } from './dto/createFood.dto';
 import { FoodDto } from './dto/food.dto';
+import { FoodInfoDto } from './dto/foodInfo.dto';
 
 @Injectable()
 export class StorageRepository {
@@ -58,6 +59,25 @@ export class StorageRepository {
     return this.calculateDaysTilExpire([foodFound])[0];
   }
 
+  async createFoodsById(userId: string, foodIds: number[]): Promise<FoodDto[]> {
+    const foodData = await this.prisma.foodInfo.findMany({
+      where: {
+        id: { in: foodIds },
+      },
+    });
+    const createFoodData = foodData.map((food) => {
+      const currentDate = new Date();
+      const expireDate = new Date(currentDate);
+      expireDate.setDate(expireDate.getDate() + food.expireDate);
+      return { ...food, name: food.class2, expireDate, userId };
+    });
+
+    const createdData = await this.prisma.food.createManyAndReturn({
+      data: createFoodData,
+    });
+    return this.calculateDaysTilExpire(createdData);
+  }
+
   async findFoodsWithOwner(
     userId: string,
     foodIds: number[]
@@ -91,5 +111,9 @@ export class StorageRepository {
       },
     });
     return this.calculateDaysTilExpire([foodUpdated])[0];
+  }
+
+  async getAllClasses(): Promise<FoodInfoDto[]> {
+    return this.prisma.foodInfo.findMany();
   }
 }

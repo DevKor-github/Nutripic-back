@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import OpenAI from 'openai';
 import { ImageToFoodRepository } from './imageToFood.repository';
@@ -16,6 +20,7 @@ export class ImageToFoodService {
       apiKey: this.configService.get('OPENAI_API_KEY'),
     });
   }
+  private logger = new Logger(ImageToFoodService.name);
 
   async analyzeImage(
     images: Express.Multer.File[]
@@ -32,7 +37,7 @@ export class ImageToFoodService {
         },
         {
           type: 'text',
-          text: '모든 사진에 있는 식재료가 뭐가 있는지 하나의 리스트 형식으로 말해줘. 다른 텍스트는 필요없어.',
+          text: '모든 사진에 있는 식재료가 뭐가 있는지 하나의 리스트(예: - 토마토\n) 형식으로 말해줘. 다른 텍스트는 필요없어.',
         },
       ];
 
@@ -55,6 +60,7 @@ export class ImageToFoodService {
       });
 
       const response_data = completion.choices[0].message.content;
+      this.logger.log(response_data);
       //ex: - 감자\n - 토마토\n - 당근
 
       const food_list = response_data
@@ -76,6 +82,7 @@ export class ImageToFoodService {
       });
       return foodInfoByStorage; //fridge, freezer, room 순서
     } catch (error) {
+      this.logger.error(error.message);
       throw new InternalServerErrorException(
         `Failed to analyze image: ${error.message}`
       );
