@@ -59,6 +59,10 @@ export class StorageService {
     return deleteCount;
   }
 
+  async getRecentlyUsedFoods(userId: string): Promise<FoodDto[]> {
+    return this.storageRepository.findDeletedFoods(userId);
+  }
+
   //식재료 정보 수정
   async updateFoodInfo(
     userId: string,

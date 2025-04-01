@@ -115,6 +115,19 @@ export class StorageController {
     return this.storageService.deleteFood(userId, food.foodIds);
   }
 
+  @ApiOperation({ summary: '최근 사용한 식재료 가져오기' })
+  @ApiOkResponse({
+    type: FoodDto,
+    isArray: true,
+    description: '최근 사용한 식재료 목록 반환',
+  })
+  @Get('/recently-used')
+  @HttpCode(HttpStatus.OK)
+  recentlyUsedFood(@User() userId: string): Promise<FoodDto[]> {
+    this.logger.log(`Get recently used food`);
+    return this.storageService.getRecentlyUsedFoods(userId);
+  }
+
   @ApiOperation({ summary: '식재료 정보 수정' })
   @ApiBody({
     type: UpdateFoodDto,
