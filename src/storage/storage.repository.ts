@@ -82,7 +82,6 @@ export class StorageRepository {
     userId: string,
     foodIds: number[]
   ): Promise<FoodDto[]> {
-    console.log(foodIds, userId);
     const foodsFound = await this.prisma.food.findMany({
       where: { id: { in: foodIds }, userId: userId },
     });
@@ -90,11 +89,20 @@ export class StorageRepository {
   }
 
   async deleteManyFoods(foodIds: number[]): Promise<number> {
-    console.log(foodIds);
-    const deleteCount = await this.prisma.food.deleteMany({
+    const deleteCount = await this.prisma.food.updateMany({
       where: { id: { in: foodIds } },
+      data: { deletedAt: new Date() },
     });
     return deleteCount.count;
+  }
+
+  async findDeletedFoods(userId: string): Promise<FoodDto[]> {
+    const deletedFoods = await this.prisma.food.findMany({
+      take: 10,
+      orderBy: { deletedAt: 'desc' },
+      where: { userId, deletedAt: { not: null } },
+    });
+    return deletedFoods;
   }
 
   async updateFoodInfo(foodInfo: UpdateFoodDto): Promise<FoodDto> {

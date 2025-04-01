@@ -14,7 +14,7 @@ export class RecipeRepository {
     const foodList = await this.prisma.food.findMany({
       where: { userId },
       select: { name: true },
-    });
+    }); //TODO: 삭제하고 recommendedRecipe의 raw query에 join 추가? 쿼리 두번보단 join 추가 쿼리 비교하기 아마 후자가 빠를듯
 
     return foodList.map((food) => food.name);
   }
