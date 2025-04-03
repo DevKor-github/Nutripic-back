@@ -10,6 +10,18 @@ import { GetAllDiaryResDto } from './dto/getAllDiary.dto';
 import { GetDiaryResDto } from './dto/getDiary.dto';
 import { CreateDiaryReqDto } from './dto/createDiary.dto';
 import { UpdateDiaryReqDto, UpdateDiaryResDto } from './dto/updateDiary.dto';
+import { GetDailyDiaryResDto } from './dto/getDailyDiary.dto';
+
+const indexToMonth = (
+  index: number
+): { targetYear: number; targetMonth: number } => {
+  const today = new Date();
+  const targetDate = new Date(today.setMonth(today.getMonth() - index));
+  const targetMonth = targetDate.getMonth();
+  const targetYear = targetDate.getFullYear();
+
+  return { targetYear: targetYear, targetMonth: targetMonth };
+};
 
 @Injectable()
 export class DiaryService {
@@ -20,21 +32,42 @@ export class DiaryService {
     userId: string,
     index: number
   ): Promise<GetAllDiaryResDto[]> {
-    const today = new Date();
-    const targetDate = new Date(today.setMonth(today.getMonth() - index));
-    const targetMonth = targetDate.getMonth();
-    const targetYear = targetDate.getFullYear();
+    const { targetYear, targetMonth } = indexToMonth(index);
 
-    const diaries = await this.diaryRepository.getDiaryByUser(
+    const diaries = await this.diaryRepository.getDiaries(
       userId,
       targetYear,
-      targetMonth
+      targetMonth,
+      null
     );
     return diaries.map((diary) => ({
       id: diary.id,
       url: diary.url,
       date: diary.date,
     }));
+  }
+
+  async getDiaryByDay(
+    userId: string,
+    index: number,
+    day: number
+  ): Promise<GetDailyDiaryResDto[]> {
+    const { targetYear, targetMonth } = indexToMonth(index);
+
+    const diaries = await this.diaryRepository.getDiaries(
+      userId,
+      targetYear,
+      targetMonth,
+      day
+    );
+    return diaries.map((diary) => 
+      ({
+        id: diary.id,
+        url: diary.url,
+        mealTime: diary.mealTime,
+        date: diary.date,
+      })
+    );
   }
 
   async getDiaryById(
@@ -52,6 +85,7 @@ export class DiaryService {
       id: diary.id,
       body: diary.body,
       url: diary.url,
+      mealTime: diary.mealTime,
       date: diary.date,
     };
   }
@@ -60,11 +94,12 @@ export class DiaryService {
     userId: string,
     createDiaryReqDto: CreateDiaryReqDto
   ): Promise<void> {
-    const { body, date, url } = createDiaryReqDto;
+    const { body, date, url, mealTime } = createDiaryReqDto;
     const diary = await this.diaryRepository.createDiary(
       userId,
       body,
       url,
+      mealTime,
       new Date(date)
     );
     if (!diary) throw new BadGatewayException('다이어리 생성에 실패했습니다.');
@@ -79,11 +114,12 @@ export class DiaryService {
     if (!diary)
       throw new NotFoundException('해당 ID의 다이어리가 존재하지 않습니다.');
 
-    const { body, date } = updateDiaryReqDto;
+    const { body, date, mealTime } = updateDiaryReqDto;
 
     const updatedDiary = await this.diaryRepository.updateDiary(
       diaryId,
       body,
+      mealTime,
       new Date(date)
     );
 
@@ -113,6 +149,8 @@ export class DiaryService {
       body: diary.body,
       url: diary.url,
       date: diary.date,
+      mealTime: diary.mealTime,
     };
   }
 }
+

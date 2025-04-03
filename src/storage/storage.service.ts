@@ -10,6 +10,7 @@ import { UpdateFoodDto } from './dto/updateFood.dto';
 import { CreateFoodDto } from './dto/createFood.dto';
 import { FoodDto } from './dto/food.dto';
 import { FoodInfoDto } from './dto/foodInfo.dto';
+import { FoodSearchDto } from './dto/foodSearch.dto';
 
 @Injectable()
 export class StorageService {
@@ -94,5 +95,13 @@ export class StorageService {
 
   async getClasses(): Promise<FoodInfoDto[]> {
     return this.storageRepository.getAllClasses();
+  }
+
+  async searchFoodInfo(keyword: string): Promise<FoodSearchDto[]> {
+    return this.storageRepository.searchFoodInfo(keyword);
+  }
+
+  async findRecentFoods(userId: string): Promise<FoodDto[]> {
+    return this.storageRepository.findRecentFoods(userId);
   }
 }
