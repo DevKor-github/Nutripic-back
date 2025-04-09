@@ -101,8 +101,11 @@ export class StorageRepository {
       take: 10,
       orderBy: { deletedDate: 'desc' },
       where: { userId, deletedDate: { not: null } },
+      distinct: ['name'],
     });
-    return deletedFoods;
+    return deletedFoods.map((food) => {
+      return { ...food, daysTilExpire: null };
+    });
   }
 
   async updateFoodInfo(foodInfo: UpdateFoodDto): Promise<FoodDto> {
