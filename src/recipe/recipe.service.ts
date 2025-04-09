@@ -87,7 +87,7 @@ export class RecipeService {
     const splitSteps = /[0-9]+\.\s/g;
     return previews.map((preview) => {
       if (typeof preview.procedure === 'string') {
-        preview.procedure = preview.procedure.split(splitSteps).slice(1);
+        preview.procedure = preview.procedure.split(splitSteps).slice();
       } else throw new Error('Invalid procedure type');
       return preview;
     });
@@ -120,7 +120,8 @@ export class RecipeService {
   }
 
   async viewMyBookmark(userId: string): Promise<RecipePreviewDto[]> {
-    return this.recipeRepository.getBookmark(userId);
+    const bookmarkRecipes = await this.recipeRepository.getBookmark(userId);
+    return this.processProcedure(bookmarkRecipes);
   }
 
   async deleteBookmark(userId: string, recipeId: number): Promise<number> {
