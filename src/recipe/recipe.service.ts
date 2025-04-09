@@ -3,6 +3,7 @@ import { RecipeRepository } from './recipe.repository';
 import { RecipeDto } from './dto/recipe.dto';
 import { RecipePreviewDto } from './dto/recipePreview.dto';
 import { RecipeFilterDto } from './dto/recipeFilter.dto';
+import { RecipeSearchDto } from './dto/recipeSearch.dto';
 
 @Injectable()
 export class RecipeService {
@@ -31,20 +32,28 @@ export class RecipeService {
         moreIngredients
       );
 
-    //만들 수 있는 레시피와 없는 레시피 구분
-    //레시피ID만 반환
-    const splitIndex = recommendedRecipes.findIndex((recipe) => recipe[1] > 0);
-    if (splitIndex === -1)
-      return [recommendedRecipes.map((info) => info[0]), []]; //모든 레시피 만들 수 있는 경우
+    /**
+     * 레시피 그룹 구분, ID만 반환
+     * groupA: 현재 가진 식재료로 만들 수 있는 레시피
+     * groupB: moreIngredients 만큼 추가하면 만들 수 있는 레시피
+     * groupC: 현재 가진 식재료를 사용하는 레시피
+     */
+    const groupAIndex = recommendedRecipes.findIndex((recipe) => recipe[1] > 0);
+    const groupBIndex = recommendedRecipes.findIndex(
+      (recipe) => recipe[1] > moreIngredients
+    );
 
-    const nowRecipes = recommendedRecipes
-      .slice(0, splitIndex)
+    const groupARecipes = recommendedRecipes
+      .slice(0, groupAIndex)
       .map((info) => info[0]);
-    const moreRecipes = recommendedRecipes
-      .slice(splitIndex)
+    const groupBRecipes = recommendedRecipes
+      .slice(groupAIndex, groupBIndex)
+      .map((info) => info[0]);
+    const groupCRecipes = recommendedRecipes
+      .slice(groupBIndex)
       .map((info) => info[0]);
 
-    return [nowRecipes, moreRecipes];
+    return [groupARecipes, groupBRecipes, groupCRecipes];
   }
 
   /** 레시피 프리뷰 정보 리스트
@@ -101,6 +110,10 @@ export class RecipeService {
     return this.processProcedure(previews);
   }
 
+  async searchRecipe(keyword: string): Promise<RecipeSearchDto[]> {
+    return this.recipeRepository.searchRecipe(keyword);
+  }
+
   //북마크 관련 기능
   async addRecipeBookmark(userId: string, recipeId: number): Promise<number> {
     return this.recipeRepository.addBookmark(userId, recipeId);
@@ -113,7 +126,6 @@ export class RecipeService {
   async deleteBookmark(userId: string, recipeId: number): Promise<number> {
     return this.recipeRepository.deleteBookmark(userId, recipeId);
   }
-  //excludeAllergic()
 
   //TODO 식품 카테고리 분류
   //TODO 유저 알레르기 정보 저장, 필터링

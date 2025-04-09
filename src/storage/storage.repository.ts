@@ -5,6 +5,7 @@ import { UpdateFoodDto } from './dto/updateFood.dto';
 import { CreateFoodDto } from './dto/createFood.dto';
 import { FoodDto } from './dto/food.dto';
 import { FoodInfoDto } from './dto/foodInfo.dto';
+import { FoodSearchDto } from './dto/foodSearch.dto';
 
 @Injectable()
 export class StorageRepository {
@@ -36,7 +37,7 @@ export class StorageRepository {
     storageType: StorageType
   ): Promise<FoodDto[]> {
     const foodsInStorage = await this.prisma.food.findMany({
-      where: { userId, storageType, deletedDate: null },
+      where: { userId, storageType, deletedDate: null }
     });
     return this.calculateDaysTilExpire(foodsInStorage);
   }
@@ -91,7 +92,7 @@ export class StorageRepository {
   async deleteManyFoods(foodIds: number[]): Promise<number> {
     const deleteCount = await this.prisma.food.updateMany({
       where: { id: { in: foodIds } },
-      data: { deletedDate: new Date() },
+      data: { deletedDate: new Date().toISOString() },
     });
     return deleteCount.count;
   }
@@ -126,5 +127,23 @@ export class StorageRepository {
 
   async getAllClasses(): Promise<FoodInfoDto[]> {
     return this.prisma.foodInfo.findMany();
+  }
+
+  async searchFoodInfo(keyword: string): Promise<FoodSearchDto[]> {
+    return this.prisma.foodInfo.findMany({
+      where: {
+        class2: { contains: keyword },
+      },
+      select: { id: true, class1: true, class2: true },
+    });
+  }
+
+  async findRecentFoods(userId: string): Promise<FoodDto[]> {
+    const foods = await this.prisma.food.findMany({
+      where: { userId },
+      orderBy: { deletedAt: 'desc' },
+      take: 5,
+    });
+    return this.calculateDaysTilExpire(foods);
   }
 }

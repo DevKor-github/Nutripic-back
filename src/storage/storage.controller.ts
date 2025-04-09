@@ -8,6 +8,7 @@ import {
   Logger,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBadGatewayResponse,
@@ -17,6 +18,7 @@ import {
   ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -28,6 +30,7 @@ import { FoodDto } from './dto/food.dto';
 import { FoodIdsDto } from './dto/foodIds.dto';
 import { Public } from 'src/auth/auth.guard';
 import { FoodInfoDto } from './dto/foodInfo.dto';
+import { FoodSearchDto } from './dto/foodSearch.dto';
 
 @ApiTags('Storage')
 @ApiBearerAuth()
@@ -175,5 +178,37 @@ export class StorageController {
   getClasses(): Promise<FoodInfoDto[]> {
     this.logger.log(`Get classes`);
     return this.storageService.getClasses();
+  }
+
+  @ApiOperation({ summary: '식재료 정보 검색' })
+  @ApiQuery({
+    name: 'keyword',
+    type: String,
+    description: '식재료 정보 검색 키워드 (class2)',
+  })
+  @ApiOkResponse({
+    type: FoodSearchDto,
+    isArray: true,
+    description: '검색된 식재료 정보 리스트',
+  })
+  @Get('/search')
+  @HttpCode(HttpStatus.OK)
+  @Public()
+  searchFoodInfo(@Query('keyword') keyword: string): Promise<FoodSearchDto[]> {
+    this.logger.log(`Search food info by keyword: ${keyword}`);
+    if (!keyword.trim()) return Promise.resolve([]);
+    return this.storageService.searchFoodInfo(keyword);
+  }
+
+  @ApiOperation({ summary: '최근 사용한 식재료 가져오기' })
+  @ApiOkResponse({
+    type: FoodDto,
+    isArray: true,
+    description: '최근 사용한 식재료 목록 반환',
+  })
+  @Get('/recent')
+  @HttpCode(HttpStatus.OK)
+  getRecentFoods(@User() userId: string): Promise<FoodDto[]> {
+    return this.storageService.findRecentFoods(userId);
   }
 }
