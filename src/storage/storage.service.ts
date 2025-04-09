@@ -100,8 +100,4 @@ export class StorageService {
   async searchFoodInfo(keyword: string): Promise<FoodSearchDto[]> {
     return this.storageRepository.searchFoodInfo(keyword);
   }
-
-  async findRecentFoods(userId: string): Promise<FoodDto[]> {
-    return this.storageRepository.findRecentFoods(userId);
-  }
 }
