@@ -71,6 +71,6 @@ export class RecipeDto {
     example: 'true',
   })
   @IsBoolean()
-  @IsNotEmpty()
-  isFavorite: boolean = false;
+  @IsOptional()
+  isFavorite?: boolean = false;
 }
