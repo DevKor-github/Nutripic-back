@@ -106,7 +106,7 @@ export class RecipeService {
     return this.recipeRepository.addBookmark(userId, recipeId);
   }
 
-  async getMyBookmark(userId: string): Promise<number[]> {
+  async viewMyBookmark(userId: string): Promise<RecipePreviewDto[]> {
     return this.recipeRepository.getBookmark(userId);
   }
 

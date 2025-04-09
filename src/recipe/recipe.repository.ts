@@ -132,12 +132,25 @@ export class RecipeRepository {
     return bookmark.recipeId;
   }
 
-  async getBookmark(userId: string): Promise<number[]> {
+  async getBookmark(userId: string): Promise<RecipePreviewDto[]> {
     const bookmarkList = await this.prisma.recipeBookmark.findMany({
       where: { userId },
-      select: { recipeId: true },
+      include: {
+        recipe: {
+          include: {
+            ingredient: {
+              select: {
+                ingredientName: true,
+                amount: true,
+              },
+            },
+          },
+        },
+      },
     });
-    return bookmarkList.map((bookmark) => bookmark.recipeId);
+    return bookmarkList.map((bookmark) => {
+      return { ...bookmark.recipe, isFavorite: true };
+    });
   }
 
   async deleteBookmark(userId: string, recipeId: number): Promise<number> {

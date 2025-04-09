@@ -71,10 +71,11 @@ export class RecipeController {
   @Get('previews')
   @HttpCode(HttpStatus.OK)
   getRecipePreviews(
+    @User() userId: string,
     @Body('recipeIds') recipeIds: number[]
   ): Promise<RecipePreviewDto[]> {
     this.logger.log(`Get recipe previews of ${recipeIds}`);
-    return this.recipeService.getRecipePreviews(recipeIds);
+    return this.recipeService.getRecipePreviews(userId, recipeIds);
   }
 
   //레시피 검색 (난이도, 시간)
@@ -98,24 +99,25 @@ export class RecipeController {
     return this.recipeService.getFilteredRecipe(recipeFilter);
   }
 
-  //상세 레시피
-  @ApiOperation({ summary: '레시피 상세 정보' })
-  @ApiParam({
-    name: 'id',
-    type: Number,
-    required: true,
-    description: '레시피 ID',
-  })
-  @ApiOkResponse({
-    type: RecipeDto,
-    description: '레시피 상세 정보',
-  })
-  @Get('detail/:id')
-  @HttpCode(HttpStatus.OK)
-  getRecipeDetail(@Param('id') recipeId: number): Promise<RecipeDto> {
-    this.logger.log(`Get recipe detail of ${recipeId}`);
-    return this.recipeService.viewRecipeDetails(recipeId);
-  }
+  //TODO: preview와 중복되는 기능, 상의 후 완전 삭제하기
+  // 상세 레시피
+  // @ApiOperation({ summary: '레시피 상세 정보' })
+  // @ApiParam({
+  //   name: 'id',
+  //   type: Number,
+  //   required: true,
+  //   description: '레시피 ID',
+  // })
+  // @ApiOkResponse({
+  //   type: RecipeDto,
+  //   description: '레시피 상세 정보',
+  // })
+  // @Get('detail/:id')
+  // @HttpCode(HttpStatus.OK)
+  // getRecipeDetail(@Param('id') recipeId: number): Promise<RecipeDto> {
+  //   this.logger.log(`Get recipe detail of ${recipeId}`);
+  //   return this.recipeService.viewRecipeDetails(recipeId);
+  // }
 
   //레시피 북마크 추가
   @ApiOperation({ summary: '레시피 북마크 추가' })
