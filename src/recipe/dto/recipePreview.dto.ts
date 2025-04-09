@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { ingredientDto } from './ingredient.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -74,4 +80,12 @@ export class RecipePreviewDto {
   @IsString()
   @IsNotEmpty()
   procedure: string | string[];
+
+  @ApiProperty({
+    description: '레시피 북마크 여부',
+    example: 'true',
+  })
+  @IsBoolean()
+  @IsNotEmpty()
+  isFavorite: boolean = false;
 }
