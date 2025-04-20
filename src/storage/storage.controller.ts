@@ -199,16 +199,4 @@ export class StorageController {
     if (!keyword.trim()) return Promise.resolve([]);
     return this.storageService.searchFoodInfo(keyword);
   }
-
-  @ApiOperation({ summary: '최근 사용한 식재료 가져오기' })
-  @ApiOkResponse({
-    type: FoodDto,
-    isArray: true,
-    description: '최근 사용한 식재료 목록 반환',
-  })
-  @Get('/recent')
-  @HttpCode(HttpStatus.OK)
-  getRecentFoods(@User() userId: string): Promise<FoodDto[]> {
-    return this.storageService.findRecentFoods(userId);
-  }
 }

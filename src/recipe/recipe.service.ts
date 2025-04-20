@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RecipeRepository } from './recipe.repository';
 import { RecipeDto } from './dto/recipe.dto';
-import { ingredientDto } from './dto/ingredient.dto';
 import { RecipePreviewDto } from './dto/recipePreview.dto';
 import { RecipeFilterDto } from './dto/recipeFilter.dto';
 import { RecipeSearchDto } from './dto/recipeSearch.dto';
@@ -65,9 +64,15 @@ export class RecipeService {
    * 프론트에서 레시피ID 리스트를 요청으로 보내면,
    * 해당 레시피들의 프리뷰를 보냄 (id, 이름, 난이도, 조리시간)
    */
-  async getRecipePreviews(recipeIds: number[]): Promise<RecipePreviewDto[]> {
+  async getRecipePreviews(
+    userId: string,
+    recipeIds: number[]
+  ): Promise<RecipePreviewDto[]> {
     if (recipeIds.length === 0) return [];
-    const previews = await this.recipeRepository.getRecipePreviews(recipeIds);
+    const previews = await this.recipeRepository.getRecipePreviews(
+      userId,
+      recipeIds
+    );
     const processed = await this.processProcedure(previews);
 
     return recipeIds.map((id) =>
@@ -82,7 +87,7 @@ export class RecipeService {
     const splitSteps = /[0-9]+\.\s/g;
     return previews.map((preview) => {
       if (typeof preview.procedure === 'string') {
-        preview.procedure = preview.procedure.split(splitSteps).slice(1);
+        preview.procedure = preview.procedure.split(splitSteps).slice();
       } else throw new Error('Invalid procedure type');
       return preview;
     });
@@ -105,22 +110,6 @@ export class RecipeService {
     return this.processProcedure(previews);
   }
 
-  /** 레시피 상세정보
-   *
-   * @param recipeId
-   * @returns Recipe Details
-   *
-   * 상세 레시피 정보 반환 (id, 이름, 재료, 상세 설명 등)
-   */
-  async viewRecipeDetails(recipeId: number): Promise<RecipeDto> {
-    const recipeInfo = await this.recipeRepository.getRecipeDetails(recipeId);
-    const splitSteps = /[0-9]+\.\s/g;
-    if (typeof recipeInfo.procedure === 'string')
-      recipeInfo.procedure = recipeInfo.procedure.split(splitSteps).slice(1);
-    else throw new Error('Invalid procedure type');
-    return recipeInfo;
-  }
-
   async searchRecipe(keyword: string): Promise<RecipeSearchDto[]> {
     return this.recipeRepository.searchRecipe(keyword);
   }
@@ -131,8 +120,8 @@ export class RecipeService {
   }
 
   async viewMyBookmark(userId: string): Promise<RecipePreviewDto[]> {
-    const previews = await this.recipeRepository.getBookmark(userId);
-    return this.processProcedure(previews);
+    const bookmarkRecipes = await this.recipeRepository.getBookmark(userId);
+    return this.processProcedure(bookmarkRecipes);
   }
 
   async deleteBookmark(userId: string, recipeId: number): Promise<number> {

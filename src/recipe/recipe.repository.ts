@@ -96,8 +96,11 @@ export class RecipeRepository {
     });
   }
 
-  async getRecipePreviews(recipeIds: number[]): Promise<RecipePreviewDto[]> {
-    return this.prisma.recipe.findMany({
+  async getRecipePreviews(
+    userId: string,
+    recipeIds: number[]
+  ): Promise<RecipePreviewDto[]> {
+    const previews = await this.prisma.recipe.findMany({
       where: {
         id: { in: recipeIds },
       },
@@ -108,28 +111,17 @@ export class RecipeRepository {
             amount: true,
           },
         },
-      },
-      // select: {
-      //   id: true,
-      //   name: true,
-      //   difficulty: true,
-      //   cookingTime: true,
-      //   imageUrl: true,
-      // },
-    });
-  }
-
-  async getRecipeDetails(recipeId: number): Promise<RecipeDto> {
-    return this.prisma.recipe.findUnique({
-      where: { id: recipeId },
-      include: {
-        ingredient: {
-          select: {
-            ingredientName: true,
-            amount: true,
-          },
+        recipeBookmark: {
+          where: { userId },
+          select: { userId: true },
         },
       },
+    });
+    return previews.map((recipe) => {
+      return {
+        ...recipe,
+        isFavorite: recipe.recipeBookmark.length > 0,
+      };
     });
   }
 
@@ -162,18 +154,12 @@ export class RecipeRepository {
               },
             },
           },
-          // select: {
-          //   id: true,
-          //   name: true,
-          //   difficulty: true,
-          //   cookingTime: true,
-          //   imageUrl: true,
-          // },
         },
       },
     });
-
-    return bookmarkList.map((bookmark) => bookmark.recipe);
+    return bookmarkList.map((bookmark) => {
+      return { ...bookmark.recipe, isFavorite: true };
+    });
   }
 
   async deleteBookmark(userId: string, recipeId: number): Promise<number> {

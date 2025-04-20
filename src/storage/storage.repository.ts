@@ -37,7 +37,7 @@ export class StorageRepository {
     storageType: StorageType
   ): Promise<FoodDto[]> {
     const foodsInStorage = await this.prisma.food.findMany({
-      where: { userId, storageType, deletedDate: null }
+      where: { userId, storageType, deletedDate: null },
     });
     return this.calculateDaysTilExpire(foodsInStorage);
   }
@@ -102,8 +102,11 @@ export class StorageRepository {
       take: 10,
       orderBy: { deletedDate: 'desc' },
       where: { userId, deletedDate: { not: null } },
+      distinct: ['name'],
     });
-    return deletedFoods;
+    return deletedFoods.map((food) => {
+      return { ...food, daysTilExpire: null };
+    });
   }
 
   async updateFoodInfo(foodInfo: UpdateFoodDto): Promise<FoodDto> {
@@ -133,14 +136,5 @@ export class StorageRepository {
       },
       select: { id: true, class1: true, class2: true },
     });
-  }
-
-  async findRecentFoods(userId: string): Promise<FoodDto[]> {
-    const foods = await this.prisma.food.findMany({
-      where: { userId },
-      orderBy: { deletedAt: 'desc' },
-      take: 5,
-    });
-    return this.calculateDaysTilExpire(foods);
   }
 }
