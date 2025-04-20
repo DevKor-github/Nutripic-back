@@ -43,8 +43,8 @@ model Food {
   icon         String       @db.VarChar(255) @default("null")
   addedDate    DateTime     @default(now()) @map("added_date")
   expireDate   DateTime?                    @map("expire_date")
-  expired      Boolean      @default(false) //TODO: 확인하고 삭제하기
-  deletedAt    DateTime?    @db.Timestamp  @map("deleted_at")
+  expired      Boolean      @default(false)
+  deletedDate  DateTime?    @map("deleted_date")
 
   @@map("food")
 }
